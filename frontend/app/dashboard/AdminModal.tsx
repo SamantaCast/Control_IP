@@ -22,11 +22,16 @@ interface Props {
   mostrar: boolean;
   editandoAdminId: string | null;
   formAdmin: FormAdmin;
-  mostrarContrasenasAdmin: boolean;
-  setMostrarContrasenasAdmin: React.Dispatch<
+  mostrarPasswordAdmin: boolean;
+  setMostrarPasswordAdmin: React.Dispatch<
     React.SetStateAction<boolean>
   >;
 
+  mostrarRepetirPasswordAdmin: boolean;
+  setMostrarRepetirPasswordAdmin: React.Dispatch<
+  React.SetStateAction<boolean>
+  >;
+  
   cumpleLongitud: boolean;
   cumpleMayuscula: boolean;
   cumpleMinuscula: boolean;
@@ -58,8 +63,10 @@ export default function AdminModal({
   mostrar,
   editandoAdminId,
   formAdmin,
-  mostrarContrasenasAdmin,
-  setMostrarContrasenasAdmin,
+  mostrarPasswordAdmin,
+  setMostrarPasswordAdmin,
+  mostrarRepetirPasswordAdmin,
+  setMostrarRepetirPasswordAdmin,
   cumpleLongitud,
   cumpleMayuscula,
   cumpleMinuscula,
@@ -171,104 +178,144 @@ export default function AdminModal({
             />
           </div>
 
-          {/* Campo para la contraseña. */}
+      {/* Campo para la contraseña. */}
 
-          <div className="inputWrapper">
-            <div className="inputIcon">
-              <FontAwesomeIcon icon={faLock} />
-            </div>
-
-            <input
-              ref={(el) => {
-                adminInputRefs.current[2] = el;
-              }}
-              name="password"
-              type={
-                mostrarContrasenasAdmin
-                  ? "text"
-                  : "password"
-              }
-              placeholder="Contraseña"
-              value={formAdmin.password}
-              onChange={handleAdminChange}
-              onKeyDown={(e) => moverAdminConEnter(e, 2)}
-              className="formInput"
-              required
-            />
-
-            {/* Botón para mostrar u ocultar la contraseña. */}
-
-            <button
-              type="button"
-              className="passwordEyeBtn"
-              onClick={() =>
-                setMostrarContrasenasAdmin(
-                  (prev) => !prev
-                )
-              }
-            >
-              <FontAwesomeIcon
-                icon={
-                  mostrarContrasenasAdmin
-                    ? faEye
-                    : faEyeSlash
-                }
-              />
-            </button>
-          </div>
-
-          {/* Reglas para validar la contraseña. */}
-
-          <div className="adminPasswordRules">
-            <div className={cumpleLongitud ? "ok" : ""}>
-              {cumpleLongitud ? "✓" : "✗"} Mínimo 8 caracteres
-            </div>
-
-            <div className={cumpleMayuscula ? "ok" : ""}>
-              {cumpleMayuscula ? "✓" : "✗"} Al menos una mayúscula
-            </div>
-
-            <div className={cumpleMinuscula ? "ok" : ""}>
-              {cumpleMinuscula ? "✓" : "✗"} Al menos una minúscula
-            </div>
-
-            <div className={cumpleSimbolo ? "ok" : ""}>
-              {cumpleSimbolo ? "✓" : "✗"} Al menos un símbolo
-            </div>
-
-            <div className={cumpleRepeticion ? "ok" : ""}>
-              {cumpleRepeticion ? "✓" : "✗"} Las contraseñas coinciden
-            </div>
-          </div>
-
-
-                    {/* Campo para confirmar la contraseña. */}
-
-          <div className="inputWrapper">
-            <div className="inputIcon">
-              <FontAwesomeIcon icon={faLock} />
-            </div>
-
-            <input
-              ref={(el) => {
-                adminInputRefs.current[3] = el;
-              }}
-              name="repetirPassword"
-              type={
-                mostrarContrasenasAdmin
-                  ? "text"
-                  : "password"
-              }
-              placeholder="Repetir contraseña"
-              value={formAdmin.repetirPassword}
-              onChange={handleAdminChange}
-              onKeyDown={(e) => moverAdminConEnter(e, 3)}
-              className="formInput"
-              required
-            />
-          </div>
-
+      <div className="inputWrapper">
+        <div className="inputIcon">
+          <FontAwesomeIcon icon={faLock} />
         </div>
+
+        <input
+          ref={(el) => {
+            adminInputRefs.current[2] = el;
+          }}
+          name="password"
+          type={
+            mostrarPasswordAdmin
+              ? "text"
+              : "password"
+          }
+          placeholder="Contraseña"
+          value={formAdmin.password}
+          onChange={handleAdminChange}
+          onKeyDown={(e) =>
+            moverAdminConEnter(e, 2)
+          }
+          className="formInput"
+          autoComplete="new-password"
+          required
+        />
+
+        <button
+          type="button"
+          className="passwordEyeBtn"
+          onClick={() =>
+            setMostrarPasswordAdmin(
+              (valorAnterior) => !valorAnterior
+            )
+          }
+          aria-label={
+            mostrarPasswordAdmin
+              ? "Ocultar contraseña"
+              : "Mostrar contraseña"
+          }
+          title={
+            mostrarPasswordAdmin
+              ? "Ocultar contraseña"
+              : "Mostrar contraseña"
+          }
+        >
+          <FontAwesomeIcon
+            icon={
+              mostrarPasswordAdmin
+                ? faEyeSlash
+                : faEye
+            }
+          />
+        </button>
+      </div>
+
+      {/* Reglas para validar la contraseña. */}
+
+      <div className="adminPasswordRules">
+        <div className={cumpleLongitud ? "ok" : ""}>
+          {cumpleLongitud ? "✓" : "✗"} Mínimo 8 caracteres
+        </div>
+
+        <div className={cumpleMayuscula ? "ok" : ""}>
+          {cumpleMayuscula ? "✓" : "✗"} Al menos una mayúscula
+        </div>
+
+        <div className={cumpleMinuscula ? "ok" : ""}>
+          {cumpleMinuscula ? "✓" : "✗"} Al menos una minúscula
+        </div>
+
+        <div className={cumpleSimbolo ? "ok" : ""}>
+          {cumpleSimbolo ? "✓" : "✗"} Al menos un símbolo
+        </div>
+
+        <div className={cumpleRepeticion ? "ok" : ""}>
+          {cumpleRepeticion ? "✓" : "✗"} Las contraseñas coinciden
+        </div>
+      </div>
+
+      {/* Campo para confirmar la contraseña. */}
+
+      <div className="inputWrapper">
+        <div className="inputIcon">
+          <FontAwesomeIcon icon={faLock} />
+        </div>
+
+        <input
+          ref={(el) => {
+            adminInputRefs.current[3] = el;
+          }}
+          name="repetirPassword"
+          type={
+            mostrarRepetirPasswordAdmin
+              ? "text"
+              : "password"
+          }
+          placeholder="Repetir contraseña"
+          value={formAdmin.repetirPassword}
+          onChange={handleAdminChange}
+          onKeyDown={(e) =>
+            moverAdminConEnter(e, 3)
+          }
+          className="formInput"
+          autoComplete="new-password"
+          required
+        />
+
+        <button
+          type="button"
+          className="passwordEyeBtn"
+          onClick={() =>
+            setMostrarRepetirPasswordAdmin(
+              (valorAnterior) => !valorAnterior
+            )
+          }
+          aria-label={
+            mostrarRepetirPasswordAdmin
+              ? "Ocultar confirmación de contraseña"
+              : "Mostrar confirmación de contraseña"
+          }
+          title={
+            mostrarRepetirPasswordAdmin
+              ? "Ocultar contraseña"
+              : "Mostrar contraseña"
+          }
+        >
+          <FontAwesomeIcon
+            icon={
+              mostrarRepetirPasswordAdmin
+                ? faEyeSlash
+                : faEye
+            }
+          />
+        </button>
+      </div>
+    </div>
 
         {/* Pie del modal. */}
 

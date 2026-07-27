@@ -13,6 +13,8 @@ export interface Impresora {
   usuario: string;
   ip: string;
   codigo: string;
+  reservado: boolean;
+  
 }
 
 // Modelo de administrador.

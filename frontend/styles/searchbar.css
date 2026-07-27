@@ -26,7 +26,9 @@
 
     align-items:center;
 
-    justify-content:space-between;
+    justify-content:flex-end;
+
+    gap:12px;
 
     margin-left:22px;
 
@@ -147,11 +149,15 @@
 
     display:grid;
 
-    grid-template-columns:repeat(3,160px);
+    grid-auto-flow:column;
+
+    grid-auto-columns:150px;
+
+    justify-content:end;
 
     gap:12px;
 
-    margin-left:45px;
+    margin-left:30px;
 
     flex-shrink:0;
 
@@ -162,32 +168,24 @@
 
 .statCard{
 
+    width:150px;
+    height:96px;
+
     background:#FFF;
 
     border:1px solid #ECECEC;
 
     border-radius:16px;
 
-    padding:14px 16px;
+    padding:12px 14px;
 
     display:flex;
 
     align-items:center;
 
-    gap:14px;
+    gap:12px;
 
     box-shadow:0 3px 10px rgba(0,0,0,.05);
-
-}
-
-
-/* EFECTO AL PASAR EL CURSOR SOBRE LA TARJETA */
-
-.statCard:hover{
-
-    transform:translateY(-3px);
-
-    box-shadow:0 10px 24px rgba(0,0,0,.10);
 
 }
 
@@ -196,11 +194,11 @@
 
 .statIcon{
 
-    width:52px;
+    width:46px;
 
-    height:52px;
+    height:46px;
 
-    border-radius:14px;
+    border-radius:12px;
 
     display:flex;
 
@@ -208,7 +206,7 @@
 
     align-items:center;
 
-    font-size:22px;
+    font-size:20px;
 
     color:#8A2036;
 
@@ -262,7 +260,7 @@
 
     margin:0;
 
-    font-size:34px;
+    font-size:30px;
 
     font-weight:700;
 
@@ -281,23 +279,20 @@
 }
 
 
-/* ==================================================
-   CONTENEDOR INDIVIDUAL DE CADA FILTRO
-================================================== */
+/* CONTENEDOR INDIVIDUAL DE CADA FILTRO */
 
 .filterItem{
 
-   width:160px;
+    width:145px;
 
-    flex:0 0 160px;
+    flex:0 0 145px;
 
     display:flex;
 
 }
 
-/*==================================================
-  SELECT MODERNO
-==================================================*/
+
+/* SELECT */
 
 .filterSelect{
      width:100%;
@@ -338,9 +333,16 @@
 
 }
 
-/* ==================================================
-   FOCUS DEL SELECT
-================================================== */
+.filterItemDepartamento {
+  width: 195px;
+  min-width: 195px;
+}
+
+.filterItemDepartamento .filterSelect {
+  width: 100%;
+}
+
+/* FOCUS DEL SELECT */
 
 .filterSelect:focus{
 
@@ -350,9 +352,7 @@
 
 }
 
-/* ==================================================
-   FILA INFERIOR DE BOTONES
-================================================== */
+/* FILA INFERIOR DE BOTONES */
 
 .actionsRow{
 
@@ -365,9 +365,7 @@
     margin-top:18px;
 
 }
-/* ==================================================
-   CONTENEDOR BOTONES IZQUIERDOS
-================================================== */
+/* CONTENEDOR BOTONES IZQUIERDOS */
 .leftButtons{
 
    display:flex;
@@ -376,9 +374,7 @@
 
 }
 
-/* ==================================================
-   CONTENEDOR BOTONES DERECHOS
-================================================== */
+/* CONTENEDOR BOTONES DERECHOS */
 .rightButtons{
 
      display:flex;
@@ -398,44 +394,30 @@
 
 }
 
-/* ==================================================
-   BOTÓN LIMPIAR FILTROS
-================================================== */
+/* BOTÓN LIMPIAR FILTROS */
 
 .btnClearMini{
-
     height:38px;
-
     padding:0 16px;
 
-    border:1px solid #D8D8D8;
-
+    border:1px solid #D8B55B;
     border-radius:10px;
 
-    background:#F8F8F8;
-
-    color:#666;
+    background:#FFF8E8;
+    color:#B8861F;
 
     font-family:"Texto";
-
     font-size:14px;
-
     font-weight:600;
 
     cursor:pointer;
-
     transition:.25s;
-
 }
 
 .btnClearMini:hover{
-
-    background:#EEEEEE;
-
-    border-color:#C8C8C8;
-
-    color:#333;
-
+    background:#B8861F;
+    border-color:#B8861F;
+    color:#FFF;
 }
 
 /* CONTENEDOR DEL BUSCADOR */
@@ -484,7 +466,7 @@
     outline:none;
     padding:0 12px;
     font-family:"Texto";
-    font-size:14px;
+    font-size:18px;
     font-weight:500;
     background:transparent;
     color:#444;
@@ -497,7 +479,7 @@
 
     font-family:"Texto";
     color:#A0A0A0;
-    font-size:13px;
+    font-size:15px;
     font-weight:500;
 
 }
@@ -606,3 +588,4 @@
     gap:6px;
 
 }
+

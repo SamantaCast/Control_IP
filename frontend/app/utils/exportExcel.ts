@@ -6,21 +6,58 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import type { Impresora } from "../dashboard/types";
 
+// Opciones de exportación.
+
+interface OpcionesExportacion {
+  esAdmin: boolean;
+  incluirReservados?: boolean;
+}
+
 // Carga una imagen desde la carpeta pública.
 
 async function cargarImagen(
   url: string
 ): Promise<ArrayBuffer> {
-
   const respuesta = await fetch(url);
-  return await respuesta.arrayBuffer();
+
+  if (!respuesta.ok) {
+    throw new Error(
+      `No se pudo cargar la imagen: ${url}`
+    );
+  }
+
+  return respuesta.arrayBuffer();
 }
 
 // Genera el archivo de Excel.
 
 export async function exportarExcel(
-  impresoras: Impresora[]
+  impresoras: Impresora[],
+  opciones: OpcionesExportacion = {
+    esAdmin: false,
+    incluirReservados: false,
+  }
 ) {
+  /*
+   * Solo un administrador puede incluir registros
+   * marcados como reservados.
+   */
+
+  const puedeIncluirReservados =
+    opciones.esAdmin === true &&
+    opciones.incluirReservados === true;
+
+  /*
+   * Si no tiene autorización, elimina de la exportación
+   * todos los registros con reservado: true.
+   */
+
+  const impresorasExportables =
+    puedeIncluirReservados
+      ? impresoras
+      : impresoras.filter(
+          (impresora) => !impresora.reservado
+        );
 
   // Obtiene la fecha actual.
 
@@ -85,8 +122,8 @@ export async function exportarExcel(
 
   hoja.addImage(idLogo1, {
     tl: {
-      col: 0.10,
-      row: 0.10,
+      col: 0.1,
+      row: 0.1,
     },
     ext: {
       width: 205,
@@ -96,8 +133,8 @@ export async function exportarExcel(
 
   hoja.addImage(idLogo2, {
     tl: {
-      col: 1.10,
-      row: 0.10,
+      col: 1.1,
+      row: 0.1,
     },
     ext: {
       width: 180,
@@ -159,25 +196,24 @@ export async function exportarExcel(
     vertical: "middle",
   };
 
-  // Muestra el total de registros.
+  // Muestra el total de registros exportados.
 
   hoja.getCell("H7").value = "TOTAL:";
-  hoja.getCell("I7").value = impresoras.length;
+  hoja.getCell("I7").value =
+    impresorasExportables.length;
 
-  ["H7"].forEach((celda) => {
-    hoja.getCell(celda).font = {
-      bold: true,
-      size: 10,
-      color: {
-        argb: "8A2036",
-      },
-    };
-  });
+  hoja.getCell("H7").font = {
+    bold: true,
+    size: 10,
+    color: {
+      argb: "8A2036",
+    },
+  };
 
   // Agrega una línea separadora.
 
-  for (let c = 1; c <= 9; c++) {
-    hoja.getRow(8).getCell(c).border = {
+  for (let columna = 1; columna <= 9; columna++) {
+    hoja.getRow(8).getCell(columna).border = {
       bottom: {
         style: "medium",
         color: {
@@ -204,8 +240,8 @@ export async function exportarExcel(
   const filaEncabezado = hoja.getRow(9);
 
   encabezados.forEach((titulo, index) => {
-
-    const celda = filaEncabezado.getCell(index + 1);
+    const celda =
+      filaEncabezado.getCell(index + 1);
 
     celda.value = titulo;
 
@@ -243,81 +279,100 @@ export async function exportarExcel(
         style: "thin",
       },
     };
-
   });
 
   filaEncabezado.height = 24;
 
-  // Agrega los registros a la tabla.
+  // Agrega únicamente los registros permitidos.
 
-  impresoras.forEach((imp, indice) => {
+  impresorasExportables.forEach(
+    (impresora, indice) => {
+      const fila = hoja.addRow([
+        impresora.departamento,
+        impresora.edificio,
+        impresora.ubicacion,
+        impresora.nombre,
+        impresora.email,
+        impresora.equipo,
+        impresora.usuario,
+        impresora.ip,
+        impresora.codigo,
+      ]);
 
-    const fila = hoja.addRow([
-      imp.departamento,
-      imp.edificio,
-      imp.ubicacion,
-      imp.nombre,
-      imp.email,
-      imp.equipo,
-      imp.usuario,
-      imp.ip,
-      imp.codigo,
-    ]);
-
-    fila.height = 21;
-
-    fila.eachCell((celda) => {
-
-      celda.alignment = {
-        vertical: "middle",
-      };
-
-      celda.border = {
-        top: {
-          style: "thin",
-          color: {
-            argb: "D9D9D9",
-          },
-        },
-        bottom: {
-          style: "thin",
-          color: {
-            argb: "D9D9D9",
-          },
-        },
-        left: {
-          style: "thin",
-          color: {
-            argb: "D9D9D9",
-          },
-        },
-        right: {
-          style: "thin",
-          color: {
-            argb: "D9D9D9",
-          },
-        },
-      };
-
-    });
-
-    // Aplica color alternado a las filas.
-
-    if (indice % 2 === 0) {
+      fila.height = 21;
 
       fila.eachCell((celda) => {
-        celda.fill = {
-          type: "pattern",
-          pattern: "solid",
-          fgColor: {
-            argb: "F7F7F7",
+        celda.alignment = {
+          vertical: "middle",
+        };
+
+        celda.border = {
+          top: {
+            style: "thin",
+            color: {
+              argb: "D9D9D9",
+            },
+          },
+          bottom: {
+            style: "thin",
+            color: {
+              argb: "D9D9D9",
+            },
+          },
+          left: {
+            style: "thin",
+            color: {
+              argb: "D9D9D9",
+            },
+          },
+          right: {
+            style: "thin",
+            color: {
+              argb: "D9D9D9",
+            },
           },
         };
       });
 
-    }
+      /*
+      * Los registros reservados tienen prioridad
+      * sobre el color alternado.
+      */
 
-  });
+      if (impresora.reservado) {
+        // Colorea toda la fila horizontal reservada.
+
+        fila.eachCell({ includeEmpty: true }, (celda) => {
+          celda.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: {
+              argb: "F8E1E7",
+            },
+          };
+
+          celda.font = {
+            bold: true,
+            color: {
+              argb: "6E192D",
+            },
+          };
+        });
+      } else if (indice % 2 === 0) {
+        // Color alternado para los registros normales.
+
+        fila.eachCell({ includeEmpty: true }, (celda) => {
+          celda.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: {
+              argb: "F7F7F7",
+            },
+          };
+        });
+      }
+    }
+  );
 
   // Activa los filtros de la tabla.
 
@@ -348,7 +403,7 @@ export async function exportarExcel(
 
   // Configura la impresión del reporte.
 
-  hoja.pageSetup.printTitlesRow = "10:10";
+  hoja.pageSetup.printTitlesRow = "9:9";
   hoja.pageSetup.horizontalCentered = true;
   hoja.pageSetup.verticalCentered = false;
 
@@ -362,13 +417,10 @@ export async function exportarExcel(
 
   const buffer = await libro.xlsx.writeBuffer();
 
-  const archivo = new Blob(
-    [buffer],
-    {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    }
-  );
+  const archivo = new Blob([buffer], {
+    type:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
 
   // Genera el nombre del archivo.
 
@@ -379,8 +431,5 @@ export async function exportarExcel(
 
   // Descarga el archivo.
 
-  saveAs(
-    archivo,
-    nombreArchivo
-  );
+  saveAs(archivo, nombreArchivo);
 }

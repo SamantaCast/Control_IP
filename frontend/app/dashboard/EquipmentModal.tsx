@@ -15,6 +15,7 @@ import {
   faNetworkWired,
   faBarcode,
   faXmark,
+  faLock,
 } from "@fortawesome/free-solid-svg-icons";
 import type { Impresora } from "./types";
 
@@ -24,6 +25,7 @@ interface Props {
   mostrarFormulario: boolean;
   editandoId: string | null;
   form: Impresora;
+  setForm: React.Dispatch<React.SetStateAction<Impresora>>;
 
   handleChange: (
     e: React.ChangeEvent<HTMLInputElement>
@@ -46,6 +48,7 @@ export default function EquipmentModal({
   mostrarFormulario,
   editandoId,
   form,
+  setForm,
   handleChange,
   guardar,
   setMostrarFormulario,
@@ -305,6 +308,39 @@ export default function EquipmentModal({
           </div>
 
         </div>
+      </div>
+      
+      <div className="switchGroup">
+
+        <div className="sectionTitle">
+          
+          <div className="sectionIcon">
+            <FontAwesomeIcon icon={faLock} />
+          </div>
+
+          <span>
+            Reservado
+          </span>
+
+        </div>
+
+        <label className="switch">
+
+          <input
+            type="checkbox"
+            checked={form.reservado}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                reservado: e.target.checked,
+              })
+            }
+          />
+
+          <span className="slider"></span>
+
+        </label>
+
       </div>
 
       {/* Pie del modal. */}

@@ -30,8 +30,8 @@ const geistMono = Geist_Mono({
 // Metadatos de la aplicación.
 
 export const metadata: Metadata = {
-  title: "Control Equipos de Cómputo",
-  description: "Sistema de control de equipos de cómputo",
+  title: "Control de Direcciones IP",
+  description: "Sistema de control de direcciones IP",
 };
 
 // Componente principal del layout.

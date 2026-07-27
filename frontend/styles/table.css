@@ -259,3 +259,80 @@
     background:#A32540;
 
 }
+
+
+
+/*Reservados*/
+.status{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:.78rem;
+    font-weight:700;
+}
+
+.disponible{
+    background:#eef9f0;
+    color:#238636;
+}
+
+.reservado{
+    background:#fff5db;
+    color:#b8861f;
+}
+.switchGroup{
+    margin-top:20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.switchLabel{
+    font-size:20px;
+    font-weight:600;
+    color:#8A2036;
+}
+
+.switch{
+    position:relative;
+    width:56px;
+    height:30px;
+    display:inline-block;
+}
+
+.switch input{
+    opacity:0;
+    width:0;
+    height:0;
+}
+
+.slider{
+    position:absolute;
+    inset:0;
+    background:#d4d4d4;
+    border-radius:30px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.slider::before{
+    content:"";
+    position:absolute;
+    width:22px;
+    height:22px;
+    left:4px;
+    top:4px;
+    background:#fff;
+    border-radius:50%;
+    transition:.3s;
+}
+
+.switch input:checked + .slider{
+    background:#b8861f;
+}
+
+.switch input:checked + .slider::before{
+    transform:translateX(26px);
+}

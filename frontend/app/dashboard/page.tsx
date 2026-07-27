@@ -21,6 +21,7 @@ import "../../styles/table.css";
 import "../../styles/pagination.css";
 import "../../styles/user-menu.css";
 import "../../styles/searchbar.css";
+import "../../styles/responsive.css";
 import type {
   Impresora,
   UsuarioAdmin,
@@ -41,6 +42,7 @@ const vacioImpresora: Impresora = {
   usuario: "",
   ip: "",
   codigo: "",
+  reservado: false,
 };
 
 // Componente principal.
@@ -70,6 +72,7 @@ export default function Page() {
   const [filtroDepartamento, setFiltroDepartamento] = useState("");
   const [filtroUbicacion, setFiltroUbicacion] = useState("");
   const [filtroEquipo, setFiltroEquipo] = useState("");
+  const [filtroReservado, setFiltroReservado] = useState("");
 
   // Estados de los filtros.
 
@@ -107,8 +110,13 @@ export default function Page() {
     useState<string | null>(null);
 
   const [
-    mostrarContrasenasAdmin,
-    setMostrarContrasenasAdmin,
+    mostrarPasswordAdmin,
+    setMostrarPasswordAdmin,
+  ] = useState(false);
+
+  const [
+    mostrarRepetirPasswordAdmin,
+    setMostrarRepetirPasswordAdmin,
   ] = useState(false);
 
   // Referencias para el control de foco entre los campos.
@@ -153,6 +161,7 @@ export default function Page() {
     equiposActivos: 0,
     totalUsuarios: 0,
     totalIPs: 0,
+    ipsReservadas: 0,
   });
 
   // Configuración del ordenamiento.
@@ -176,12 +185,74 @@ export default function Page() {
 
   // Exportación de registros.
 
-  const descargarExcel = () => {
-    exportarExcel(impresoras);
+  const descargarExcel = async () => {
+    let incluirReservados = false;
+
+    // Solamente el administrador puede decidir incluirlos.
+
+    if (rol === "admin") {
+      const respuesta = await Swal.fire({
+        icon: "question",
+        title: "Exportar a Excel",
+        text: "¿Deseas incluir los registros marcados como reservados?",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: "Sí, incluir",
+        denyButtonText: "No incluir",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#8A2036",
+        denyButtonColor: "#6c757d",
+        cancelButtonColor: "#999999",
+      });
+
+      // Si pulsa Cancelar, no genera el archivo.
+
+      if (respuesta.isDismissed) {
+        return;
+      }
+
+      incluirReservados = respuesta.isConfirmed;
+    }
+
+    await exportarExcel(impresorasOrdenadas, {
+      esAdmin: rol === "admin",
+      incluirReservados,
+    });
   };
 
-  const generarPDF = () => {
-    exportarPDF(impresorasOrdenadas);
+  const generarPDF = async () => {
+    let incluirReservados = false;
+
+    // Solamente el administrador puede decidir incluirlos.
+
+    if (rol === "admin") {
+      const respuesta = await Swal.fire({
+        icon: "question",
+        title: "Exportar a PDF",
+        text: "¿Deseas incluir los registros marcados como reservados?",
+        showCancelButton: true,
+        showDenyButton: true,
+        confirmButtonText: "Sí, incluir",
+        denyButtonText: "No incluir",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#8A2036",
+        denyButtonColor: "#6c757d",
+        cancelButtonColor: "#999999",
+      });
+
+      // Si pulsa Cancelar, no genera el archivo.
+
+      if (respuesta.isDismissed) {
+        return;
+      }
+
+      incluirReservados = respuesta.isConfirmed;
+    }
+
+    await exportarPDF(impresorasOrdenadas, {
+      esAdmin: rol === "admin",
+      incluirReservados,
+    });
   };
 
   // Ordena los registros según la columna seleccionada.
@@ -233,47 +304,77 @@ export default function Page() {
   // Carga la información inicial del sistema y recupera la sesión del usuario.
 
   useEffect(() => {
-    const tokenGuardado =
-      localStorage.getItem("token");
+    const tokenGuardado = localStorage.getItem("token");
+    const rolGuardado = localStorage.getItem("rol");
+    const nombreGuardado = localStorage.getItem("nombre");
+    const loginTime = localStorage.getItem("loginTime");
 
-    const rolGuardado =
-      localStorage.getItem("rol");
+    const OCHO_HORAS = 8 * 60 * 60 * 1000;
 
-    const nombreGuardado =
-      localStorage.getItem("nombre");
+    const sesionValida =
+      tokenGuardado &&
+      loginTime &&
+      Date.now() - Number(loginTime) < OCHO_HORAS;
 
-    cargarImpresoras("", "");
+    if (sesionValida) {
+      cargarImpresoras(tokenGuardado, "");
+
+      setToken(tokenGuardado);
+      setRol(rolGuardado || "");
+      setNombreUsuario(nombreGuardado || "");
+      setLogueado(true);
+
+      if (rolGuardado === "admin") {
+        cargarAdministradores(tokenGuardado);
+      }
+    } else {
+      localStorage.removeItem("token");
+      localStorage.removeItem("rol");
+      localStorage.removeItem("nombre");
+      localStorage.removeItem("loginTime");
+
+      cargarImpresoras("", "");
+    }
+
     cargarFiltros();
     cargarEdificios();
-    cargarStats();
 
-    if (!tokenGuardado) return;
-
-    setToken(tokenGuardado);
-    setRol(rolGuardado || "");
-    setNombreUsuario(nombreGuardado || "");
-    setLogueado(true);
-
-    if (rolGuardado === "admin") {
-      cargarAdministradores(tokenGuardado);
+    if (sesionValida) {
+      cargarStats(tokenGuardado);
+    } else {
+      cargarStats();
     }
+
   }, []);
 
   // Ejecuta la búsqueda automáticamente cuando cambian los filtros.
 
   useEffect(() => {
     const tiempo = setTimeout(() => {
-      buscar();
+      if (
+        !busqueda.trim() &&
+        !filtroDepartamento &&
+        !filtroEdificio &&
+        !filtroUbicacion &&
+        !filtroEquipo &&
+        !filtroReservado
+      ) {
+        cargarImpresoras(token, "");
+        cargarStats(token);
+      } else {
+        buscar();
+      }
     }, 300);
 
     return () => clearTimeout(tiempo);
-
   }, [
     busqueda,
     filtroDepartamento,
     filtroEdificio,
     filtroUbicacion,
     filtroEquipo,
+    filtroReservado,
+    token,
   ]);
 
   // Genera la cabecera de autorización para las peticiones protegidas.
@@ -345,17 +446,35 @@ export default function Page() {
 
   // Obtiene las estadísticas del dashboard.
 
-  const cargarStats = async () => {
+  const cargarStats = async (tok: string = "") => {
     try {
+
+      const config = tok ? authHeader(tok) : {};
+
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/impresoras/stats`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/impresoras/stats`,
+        config
       );
 
       setStats(res.data);
+
     } catch (error) {
       console.error("Error al cargar estadísticas:", error);
     }
   };
+
+
+  // Actualiza la tabla y las estadísticas del dashboard.
+
+    const actualizarDashboard = async (
+      tok: string,
+      textoBusqueda: string = ""
+    ) => {
+      await Promise.all([
+        cargarImpresoras(tok, textoBusqueda),
+        cargarStats(tok),
+      ]);
+    };
 
 // Obtiene los datos para los filtros de búsqueda.
 
@@ -408,6 +527,7 @@ const login = async () => {
     localStorage.setItem("token", res.data.token);
     localStorage.setItem("rol", res.data.rol);
     localStorage.setItem("nombre", res.data.nombre);
+    localStorage.setItem("loginTime", Date.now().toString());
 
     // Actualiza los estados de la aplicación.
 
@@ -419,10 +539,9 @@ const login = async () => {
 
     // Carga la información principal del sistema.
 
-    cargarImpresoras("", "");
     cargarFiltros();
     cargarEdificios();
-    cargarStats();
+    cargarStats(res.data.token);
 
     // Obtiene la lista de administradores si el usuario tiene ese rol.
 
@@ -477,13 +596,14 @@ const buscar = async () => {
   try {
     const config = token ? authHeader(token) : {};
 
-    const params = new URLSearchParams({
-      busqueda: busqueda.trim(),
-      departamento: filtroDepartamento,
-      edificio: filtroEdificio,
-      ubicacion: filtroUbicacion,
-      equipo: filtroEquipo,
-    });
+   const params = new URLSearchParams({
+    busqueda: busqueda.trim(),
+    departamento: filtroDepartamento,
+    edificio: filtroEdificio,
+    ubicacion: filtroUbicacion,
+    equipo: filtroEquipo,
+    reservado: filtroReservado,
+  });
 
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/impresoras?${params.toString()}`,
@@ -517,17 +637,18 @@ const abrirEditar = (imp: Impresora) => {
   // Carga la información del registro seleccionado.
 
   setForm({
-    _id: imp._id,
-    departamento: imp.departamento || "",
-    edificio: imp.edificio || "",
-    ubicacion: imp.ubicacion || "",
-    nombre: imp.nombre || "",
-    email: imp.email || "",
-    equipo: imp.equipo || "",
-    usuario: imp.usuario || "",
-    ip: imp.ip || "",
-    codigo: imp.codigo || "",
-  });
+  _id: imp._id,
+  departamento: imp.departamento || "",
+  edificio: imp.edificio || "",
+  ubicacion: imp.ubicacion || "",
+  nombre: imp.nombre || "",
+  email: imp.email || "",
+  equipo: imp.equipo || "",
+  usuario: imp.usuario || "",
+  ip: imp.ip || "",
+  codigo: imp.codigo || "",
+  reservado: imp.reservado ?? false,
+});
 
   setMostrarFormulario(true);
 };
@@ -549,20 +670,28 @@ const guardar = async () => {
 
   // Verifica que los campos obligatorios estén completos.
 
-  if (!form.departamento.trim() || !form.nombre.trim()) {
-    await Swal.fire({
-      icon: "warning",
-      title: "Datos incompletos",
-      html: `
-        Faltan datos obligatorios.<br>
-        (Nombre y/o Departamento)
-      `,
-      confirmButtonColor: "#8A2036",
-      confirmButtonText: "Aceptar",
-    });
+const todosVacios =
+  !form.departamento.trim() &&
+  !form.edificio.trim() &&
+  !form.ubicacion.trim() &&
+  !form.nombre.trim() &&
+  !form.email.trim() &&
+  !form.equipo.trim() &&
+  !form.usuario.trim() &&
+  !form.ip.trim() &&
+  !form.codigo.trim();
 
-    return;
-  }
+if (todosVacios) {
+  await Swal.fire({
+    icon: "warning",
+    title: "Datos incompletos",
+    text: "Debe capturar al menos un dato para guardar el registro.",
+    confirmButtonColor: "#8A2036",
+    confirmButtonText: "Aceptar",
+  });
+
+  return;
+}
 
   try {
 
@@ -610,8 +739,7 @@ const guardar = async () => {
 
     // Actualiza la información del sistema.
 
-    await cargarImpresoras(token, busqueda);
-    await cargarStats();
+    await actualizarDashboard(token, busqueda);
 
   } catch (error: any) {
 
@@ -663,8 +791,7 @@ const eliminar = async (id?: string) => {
 
     // Actualiza la información del sistema.
 
-    await cargarImpresoras(token, busqueda);
-    await cargarStats();
+   await actualizarDashboard(token, busqueda);
 
   } catch (error: any) {
 
@@ -729,11 +856,10 @@ const cargarAdministradoresRegistrados = async (tok: string) => {
 // Abre el formulario para registrar un nuevo administrador.
 
 const abrirNuevoAdmin = () => {
-  setMostrarContrasenasAdmin(false);
+  setMostrarPasswordAdmin(false);
+  setMostrarRepetirPasswordAdmin(false);
   setMostrarAdministradoresRegistrados(false);
   setEditandoAdminId(null);
-
-  // Restablece los datos del formulario.
 
   setFormAdmin({
     nombre: "",
@@ -748,12 +874,13 @@ const abrirNuevoAdmin = () => {
 
 // Abre el formulario para editar un administrador.
 
-const abrirEditarAdmin = (admin: UsuarioAdmin) => {
-  setMostrarContrasenasAdmin(false);
+const abrirEditarAdmin = (
+  admin: UsuarioAdmin
+) => {
+  setMostrarPasswordAdmin(false);
+  setMostrarRepetirPasswordAdmin(false);
   setMostrarAdministradoresRegistrados(false);
   setEditandoAdminId(admin._id || null);
-
-  // Carga la información del administrador seleccionado.
 
   setFormAdmin({
     nombre: admin.nombre,
@@ -986,7 +1113,8 @@ const cerrarFormularioAdmin = () => {
   setMostrarAdmins(false);
   setEditandoAdminId(null);
   setMostrarAdministradoresRegistrados(false);
-  setMostrarContrasenasAdmin(false);
+  setMostrarPasswordAdmin(false);
+  setMostrarRepetirPasswordAdmin(false);
 };
 
 // Cancela la edición y regresa al listado de administradores.
@@ -995,7 +1123,8 @@ const cancelarFormularioAdmin = () => {
   setMostrarAdmins(false);
   setEditandoAdminId(null);
   setMostrarAdministradoresRegistrados(true);
-  setMostrarContrasenasAdmin(false);
+  setMostrarPasswordAdmin(false);
+  setMostrarRepetirPasswordAdmin(false);
 };
 
 // Cierra la sesión del usuario.
@@ -1007,6 +1136,7 @@ const cerrarSesion = async () => {
   localStorage.removeItem("token");
   localStorage.removeItem("rol");
   localStorage.removeItem("nombre");
+  localStorage.removeItem("loginTime");
 
   // Restablece la información del usuario.
 
@@ -1020,7 +1150,11 @@ const cerrarSesion = async () => {
   // Restablece los filtros de búsqueda.
 
   setBusqueda("");
+  setFiltroDepartamento("");
   setFiltroEdificio("");
+  setFiltroUbicacion("");
+  setFiltroEquipo("");
+  setFiltroReservado("");
 
   // Limpia la información cargada.
 
@@ -1035,7 +1169,8 @@ const cerrarSesion = async () => {
   setMostrarFormulario(false);
   setMostrarAdmins(false);
   setMostrarAdministradoresRegistrados(false);
-  setMostrarContrasenasAdmin(false);
+  setMostrarPasswordAdmin(false);
+  setMostrarRepetirPasswordAdmin(false);
   setMostrarLogin(false);
   setMostrarMenuUsuario(false);
 
@@ -1053,9 +1188,9 @@ const cerrarSesion = async () => {
     passwordActual: "",
   });
 
-  // Carga nuevamente los registros públicos.
+  // Carga nuevamente la información pública.
 
-  await cargarImpresoras("", "");
+  await actualizarDashboard("", "");
 };
 
 // Abre el listado de administradores registrados.
@@ -1098,6 +1233,7 @@ return (
 
       <SearchBar
         logueado={logueado}
+        impresoras={impresoras}
         token={token}
         busqueda={busqueda}
         setBusqueda={setBusqueda}
@@ -1114,6 +1250,8 @@ return (
         filtroUbicacion={filtroUbicacion}
         setFiltroUbicacion={setFiltroUbicacion}
         filtroEquipo={filtroEquipo}
+        filtroReservado={filtroReservado}
+        setFiltroReservado={setFiltroReservado}
         setFiltroEquipo={setFiltroEquipo}
         exportarExcel={descargarExcel}
         exportarPDF={generarPDF}
@@ -1154,6 +1292,7 @@ return (
       mostrarFormulario={mostrarFormulario}
       editandoId={editandoId}
       form={form}
+      setForm={setForm}
       handleChange={handleChange}
       guardar={guardar}
       setMostrarFormulario={setMostrarFormulario}
@@ -1167,8 +1306,18 @@ return (
       mostrar={mostrarAdmins}
       editandoAdminId={editandoAdminId}
       formAdmin={formAdmin}
-      mostrarContrasenasAdmin={mostrarContrasenasAdmin}
-      setMostrarContrasenasAdmin={setMostrarContrasenasAdmin}
+      mostrarPasswordAdmin={
+        mostrarPasswordAdmin
+      }
+      setMostrarPasswordAdmin={
+        setMostrarPasswordAdmin
+      }
+      mostrarRepetirPasswordAdmin={
+        mostrarRepetirPasswordAdmin
+      }
+      setMostrarRepetirPasswordAdmin={
+        setMostrarRepetirPasswordAdmin
+      }
       cumpleLongitud={cumpleLongitud}
       cumpleMayuscula={cumpleMayuscula}
       cumpleMinuscula={cumpleMinuscula}
@@ -1176,10 +1325,14 @@ return (
       cumpleRepeticion={cumpleRepeticion}
       adminInputRefs={adminInputRefs}
       guardarAdmin={guardarAdmin}
-      cerrarFormularioAdmin={cerrarFormularioAdmin}
+      cerrarFormularioAdmin={
+        cerrarFormularioAdmin
+      }
       handleAdminChange={handleAdminChange}
       moverAdminConEnter={moverAdminConEnter}
-      cancelarFormularioAdmin={cancelarFormularioAdmin}
+      cancelarFormularioAdmin={
+        cancelarFormularioAdmin
+      }
     />
 
     {/* Modal con la lista de administradores. */}

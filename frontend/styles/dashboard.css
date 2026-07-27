@@ -1,15 +1,14 @@
 /* Barra superior. */
 
 .topBar {
-
   height: 70px;
   padding: 0 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #FFF;
-  border-bottom: 1px solid #ECECEC;
-
+  border-bottom: 1px solid #B8861F;
+  box-shadow: 0 2px 6px rgba(184, 134, 31, 0.08);
 }
 
 /* Logotipos. */
@@ -99,6 +98,42 @@
   border-color: #8A2036;
   box-shadow: 0 0 0 3px rgba(138, 32, 54, .08);
 
+}
+.inputGroup {
+  position: relative;
+}
+
+.inputGroup input {
+  padding-right: 42px;
+}
+
+.loginPasswordEyeBtn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  border: none;
+  background: transparent;
+
+  color: #8a2036;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.loginPasswordEyeBtn:hover {
+  opacity: 0.7;
+}
+
+.loginPasswordEyeBtn:focus-visible {
+  outline: 2px solid #8a2036;
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 /* Ícono del campo. */
@@ -268,3 +303,5 @@
   box-shadow: 0 8px 18px rgba(138, 32, 54, .25);
 
 }
+
+

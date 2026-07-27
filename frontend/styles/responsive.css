@@ -1,0 +1,2112 @@
+/* ESTILOS RESPONSIVOS DEL SISTEMA */
+
+/* Evita desbordamientos generales. */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/*
+ * El botón de filtros permanece oculto
+ * en pantallas de escritorio.
+ */
+
+.mobileFiltersButton {
+  display: none;
+}
+
+/* TABLETAS Y CELULARES */
+
+@media (max-width: 768px) {
+
+/* CONTENEDORES GENERALES */
+
+.panel,
+  .panelHeader,
+  .headerTopRow,
+  .filtersCard,
+  .filtersRow,
+  .actionsRow {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.panel {
+  padding: 12px;
+}
+
+/* ENCABEZADO Y LOGOTIPOS */
+
+.logosLeft {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.topLogo {
+  width: auto;
+  max-width: 32%;
+  max-height: 48px;
+  object-fit: contain;
+}
+
+.logoDivider {
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+.loginIconBtn,
+  .userProfileBtn {
+  flex-shrink: 0;
+}
+
+/* TARJETAS DE ESTADÍSTICAS */
+
+.headerTopRow {
+  display: block;
+}
+
+.titleArea {
+  display: none;
+}
+
+.statsArea {
+  display: grid;
+  grid-template-columns: repeat(
+    3,
+    minmax(0, 1fr)
+    );
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  margin: 10px 0 18px;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+  min-height: 94px;
+  padding: 10px 5px;
+  border-radius: 14px;
+}
+
+.statIcon {
+  flex-shrink: 0;
+}
+
+.statCard > div:last-child {
+  min-width: 0;
+}
+
+.statLabel {
+  display: block;
+  white-space: nowrap;
+}
+
+.statSmall {
+  display: block;
+  white-space: nowrap;
+}
+
+/* BUSCADOR Y BOTÓN DE FILTROS */
+
+.filtersCard {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.filtersRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr)
+    52px;
+  align-items: center;
+  gap: 8px;
+}
+
+.searchBox {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.searchInput {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Botón hamburguesa. */
+
+.mobileFiltersButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  min-width: 52px;
+  height: 48px;
+  padding: 0;
+  border: 1px solid #8a2036;
+  border-radius: 13px;
+  background: #ffffff;
+  color: #8a2036;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+/*
+   * En móvil solo se muestra el icono;
+   * se oculta el texto "Filtros".
+   */
+
+.mobileFiltersButton span {
+  display: none;
+}
+
+/* PANEL DESPLEGABLE DE FILTROS */
+
+.filtersRight {
+  display: none;
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+}
+
+.filtersRight.filtersMobileOpen {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.filterItem,
+  .filterItemDepartamento {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.filterSelect,
+  .btnClearMini {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: 46px;
+}
+
+.filterSelect {
+  padding: 0 42px 0 16px;
+  font-size: 12px;
+}
+
+.btnClearMini {
+  margin: 0;
+}
+
+/* BOTONES DE ACCIONES */
+
+.actionsRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leftButtons,
+  .rightButtons {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.btnExcel,
+  .btnPDF,
+  .dashboardNewBtn {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* PAGINACIÓN */
+
+.paginationContainer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 16px 0 24px;
+  padding: 10px 0;
+  overflow: hidden;
+}
+
+/*
+   * Texto:
+   * Mostrando 1 - 15 de 228 registros.
+   */
+
+.paginationInfo,
+  .paginationLeft,
+  .paginationSummary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: center;
+  white-space: normal;
+}
+
+/* Selector de registros por página */
+
+.recordsPerPage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.recordsPerPage label {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.recordsPerPage select,
+  select.paginationSelect,
+  select.recordsSelect,
+  select.registrosPorPagina {
+  display: block;
+  width: auto;
+  min-width: 72px;
+  max-width: 100%;
+  height: 38px;
+  padding: 0 28px 0 10px;
+  border: 1px solid #d7d7d7;
+  border-radius: 9px;
+  background-color: #ffffff;
+  color: #333333;
+  font-size: 13px;
+}
+
+/* Botones y números de página. */
+
+.paginationButtons,
+  .paginationPages,
+  .pagesContainer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 7px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 5px 4px 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-inline: contain;
+}
+
+.paginationButtons button,
+  .paginationPages button,
+  .pagesContainer button {
+  flex: 0 0 auto;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 11px;
+}
+
+}
+
+/* TELÉFONOS PEQUEÑOS */
+
+@media (max-width: 480px) {
+
+/* Panel principal. */
+
+.panel {
+  padding: 10px;
+}
+
+/* Encabezado. */
+
+.topBar {
+  padding: 7px 8px;
+}
+
+.topLogo {
+  max-height: 40px;
+}
+
+.logoDivider {
+  display: none;
+}
+
+/* Tarjetas de estadísticas */
+
+.statsArea {
+  gap: 5px;
+}
+
+.statCard {
+  min-height: 84px;
+  gap: 4px;
+  padding: 8px 3px;
+}
+
+/* Paginación */
+
+.paginationContainer {
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.paginationInfo,
+  .paginationLeft,
+  .paginationSummary {
+  font-size: 11px;
+}
+
+.paginationButtons,
+  .paginationPages,
+  .pagesContainer {
+  gap: 6px;
+}
+
+.paginationButtons button,
+  .paginationPages button,
+  .pagesContainer button {
+  min-width: 38px;
+  height: 38px;
+  padding: 0 9px;
+}
+
+}
+
+/* PAGINACIÓN CON MENÚ MÓVIL */
+
+/* En escritorio no aparece el botón hamburguesa */
+
+.mobilePaginationButton {
+  display: none;
+}
+
+/* En escritorio los controles permanecen visibles */
+
+.paginationMobilePanel {
+  display: contents;
+}
+
+@media (max-width: 768px) {
+
+.tablePagination {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr)
+    auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 14px 0 24px;
+  padding: 10px;
+  overflow: visible;
+}
+
+/* Información de registros. */
+
+.paginationInfo {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 11px;
+  text-align: left;
+  white-space: normal;
+}
+
+/* Botón hamburguesa */
+
+.mobilePaginationButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-width: 48px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #8a2036;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #8a2036;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Panel oculto inicialmente */
+
+.paginationMobilePanel {
+  display: none;
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Panel desplegado */
+
+.paginationMobilePanel.paginationMobileOpen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+/* Navegación de páginas */
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 4px 0 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.pageBtn {
+  flex: 0 0 auto;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 9px;
+}
+
+.pageDots {
+  flex: 0 0 auto;
+  padding: 0 4px;
+}
+
+/* Selector de cantidad */
+
+.rowsPerPage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.rowsPerPage label {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.rowsPerPage select {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+  max-width: 220px;
+  height: 40px;
+  padding: 0 32px 0 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 9px;
+  background-color: #ffffff;
+  color: #333333;
+  font-size: 13px;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.tablePagination {
+  padding: 9px;
+}
+
+.paginationInfo {
+  font-size: 10px;
+}
+
+.mobilePaginationButton {
+  width: 46px;
+  min-width: 46px;
+  padding: 0;
+}
+
+/* En celulares pequeños solo aparece el icono */
+
+.mobilePaginationButton span {
+  display: none;
+}
+
+.paginationMobilePanel.paginationMobileOpen {
+  gap: 10px;
+}
+
+.rowsPerPage select {
+  max-width: 190px;
+}
+
+}
+
+/* INICIO DE SESIÓN COMPACTO EN MÓVIL */
+
+@media (max-width: 768px) {
+
+.topBar {
+  position: relative;
+  overflow: visible;
+  z-index: 1000;
+}
+
+.topBar > div:last-child {
+  position: relative !important;
+}
+
+.loginBox {
+  position: absolute;
+  top: calc(100% + 25px);
+  right: 0;
+  left: auto;
+  width: 300px;
+  max-width: calc(100vw - 20px);
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.14);
+  z-index: 9999;
+}
+
+.loginInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 100%;
+}
+
+.loginBox .inputGroup {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin: 0;
+}
+
+.loginBox .inputGroup input {
+  width: 100%;
+  height: 38px;
+  margin: 0;
+  padding: 0 38px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+.loginBox .inputGroup > .inputIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  width: 14px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.loginPasswordEyeBtn {
+  position: absolute;
+  top: 50%;
+  right: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: #8a2036;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 3;
+}
+
+.loginBox .btnLogin {
+  width: 100%;
+  height: 38px;
+  margin: 0;
+  padding: 0 12px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.loginBox {
+  right: 0;
+  width: 280px;
+  max-width: calc(100vw - 14px);
+  padding: 8px;
+}
+
+.loginInputs {
+  gap: 6px;
+}
+
+.loginBox .inputGroup input,
+  .loginBox .btnLogin {
+  height: 36px;
+}
+
+}
+
+/* ENCABEZADO AUTENTICADO APROVECHANDO EL ANCHO */
+
+@media (max-width: 768px) {
+
+.topBar.topBarLogged {
+  display: grid;
+  align-items: center;
+  width: 100%;
+  min-height: 56px;
+  padding: 4px 8px;
+  overflow: visible;
+}
+
+/* Los logos aprovechan todo el espacio disponible */
+
+.topBarLogged .logosLeft {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.topBarLogged .topLogo {
+  width: auto;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.topBarLogged .logoDivider {
+  display: none;
+}
+
+/* Perfil con ancho fijo a la derecha */
+
+.topBarLogged .userMenuContainer {
+  position: relative;
+  margin: 0;
+}
+
+.topBarLogged .userProfileBtn {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 9px;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 2px 3px;
+  border: none;
+  background: transparent;
+}
+
+.topBarLogged .userAvatar {
+  width: 28px;
+  height: 28px;
+  font-size: 12px;
+}
+
+.topBarLogged .userInfo {
+  min-width: 0;
+}
+
+.topBarLogged .userName {
+  width: 100%;
+  font-size: 8px;
+  line-height: 1.05;
+  font-weight: 700;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.topBarLogged .userRole {
+  margin-top: 2px;
+  font-size: 6.5px;
+  line-height: 1;
+  text-align: left;
+}
+
+.topBarLogged .userArrow {
+  font-size: 7px;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.topBar.topBarLogged {
+  gap: 6px;
+  min-height: 50px;
+  padding: 3px 6px;
+}
+
+.topBarLogged .logosLeft {
+  width: 180px;
+  min-width: 180px;
+}
+
+.topBarLogged .userMenuContainer {
+  margin-left: 8px;
+}
+
+.topBarLogged .userProfileBtn {
+  grid-template-columns: 23px minmax(0, 1fr) 7px;
+}
+
+.topBarLogged .userAvatar {
+  width: 23px;
+  height: 23px;
+  font-size: 10px;
+}
+
+.topBarLogged .userName {
+  font-size: 6.5px;
+}
+
+.topBarLogged .userRole {
+  font-size: 5px;
+}
+
+}
+
+@media (max-width: 768px) {
+
+.topBarLogged .userProfileBtn {
+  padding-left: 8px;
+  padding-right: 0;
+}
+
+.topBarLogged .userArrow {
+  justify-self: end;
+  transform: translateX(5px);
+}
+
+}
+
+@media (max-width: 480px) {
+
+.topBarLogged .userMenuContainer {
+  transform: translateX(22px);
+}
+
+.topBarLogged .userArrow {
+  transform: translateX(3px);
+}
+
+}
+
+@media (max-width: 768px) {
+
+.topBar.topBarLogged {
+  grid-template-columns: minmax(0, 1fr) 145px;
+  gap: 6px;
+}
+
+.topBarLogged .logosLeft {
+  width: 100%;
+  min-width: 0;
+  padding-right: 4px;
+}
+
+.topBarLogged .userMenuContainer {
+  width: 145px;
+  min-width: 145px;
+  margin-left: 0;
+  transform: none;
+}
+
+.topBarLogged .userInfo,
+  .topBarLogged .userArrow {
+  transform: none;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.topBar.topBarLogged {
+  grid-template-columns: minmax(0, 1fr) 138px;
+}
+
+.topBarLogged .userMenuContainer {
+  width: 138px;
+  min-width: 138px;
+}
+
+}
+
+@media (max-width: 768px) {
+
+.topBarLogged .userInfo {
+  transform: translateX(24px);
+}
+
+}
+
+@media (max-width: 480px) {
+
+.topBarLogged .userInfo {
+  transform: translateX(22px);
+}
+
+}
+
+@media (max-width: 768px) {
+
+.topBarLogged .logosLeft {
+  gap: 2px;
+}
+
+.topBarLogged .logosLeft img:nth-of-type(1) {
+  max-width: 116px;
+  max-height: 49px;
+}
+
+.topBarLogged .logosLeft img:nth-of-type(2) {
+  max-width: 89px;
+  max-height: 49px;
+}
+
+.topBarLogged .logosLeft img:nth-of-type(3) {
+  max-width: 38px;
+  max-height: 45px;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.topBarLogged .logosLeft {
+  gap: 1px;
+}
+
+.topBarLogged .logosLeft img:nth-of-type(1) {
+  max-width: 108px;
+  max-height: 46px;
+}
+
+.topBarLogged .logosLeft img:nth-of-type(2) {
+  max-width: 83px;
+  max-height: 46px;
+}
+
+.topBarLogged .logosLeft img:nth-of-type(3) {
+  max-width: 34px;
+  max-height: 42px;
+}
+
+}
+
+@media (max-width: 768px) {
+
+.topBar.topBarLogged {
+  position: relative;
+  border-bottom: none;
+}
+
+.topBar.topBarLogged::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  height: 1.5px;
+  background: #c9a13a;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.topBar.topBarLogged::after {
+  bottom: 1px;
+}
+
+}
+
+/* TARJETAS EN 2 COLUMNAS */
+
+@media (max-width: 768px) {
+
+.statsArea,
+  .statsArea.statsAreaLogged {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  grid-auto-flow: row !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.statsArea > .statCard,
+  .statsArea.statsAreaLogged > .statCard {
+  grid-column: auto !important;
+  grid-row: auto !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  margin: 0 !important;
+  flex: none !important;
+  transform: none !important;
+}
+
+.statIcon {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  font-size: 12px;
+}
+
+.statLabel {
+  font-size: 8px;
+  line-height: 1;
+}
+
+.statNumber {
+  font-size: 16px;
+  line-height: 1;
+  margin: 1px 0;
+}
+
+.statSmall {
+  font-size: 6px;
+  line-height: 1;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.statsArea,
+  .statsArea.statsAreaLogged {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+}
+
+/* Tarjetas estadísticas realmente compactas en móvil */
+
+@media (max-width: 768px) {
+
+.statsArea,
+  .statsArea.statsAreaLogged {
+  gap: 6px !important;
+  margin: 6px 0 12px !important;
+}
+
+.statsArea > .statCard,
+  .statsArea.statsAreaLogged > .statCard {
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  padding: 4px 6px !important;
+  gap: 5px !important;
+  border-radius: 12px !important;
+}
+
+}
+
+@media (max-width: 480px) {
+
+.statsArea,
+  .statsArea.statsAreaLogged {
+  gap: 5px !important;
+  margin: 5px 0 10px !important;
+}
+
+.statsArea > .statCard,
+  .statsArea.statsAreaLogged > .statCard {
+  height: 58px !important;
+  min-height: 58px !important;
+  max-height: 58px !important;
+  padding: 3px 5px !important;
+  gap: 4px !important;
+  border-radius: 11px !important;
+}
+
+.statIcon {
+  width: 25px !important;
+  height: 25px !important;
+  min-width: 25px !important;
+  font-size: 12px !important;
+}
+
+.statLabel {
+  font-size: 8px !important;
+}
+
+.statNumber {
+  margin: 1px 0 !important;
+  font-size: 15px !important;
+}
+
+.statSmall {
+  font-size: 6px !important;
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* MODAL DE ADMINISTRADORES EN MÓVIL */
+
+@media (max-width: 768px) {
+  .overlayStyle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 100dvh;
+
+    padding: 20px;
+    overflow: auto;
+  }
+
+  .adminListModal {
+    width: min(92vw, 380px);
+    max-width: 380px;
+    max-height: calc(100dvh - 40px);
+
+    padding: 22px 20px 20px;
+
+    border-radius: 24px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .modalHeader {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 40px;
+    align-items: start;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .modalHeader > div:first-child {
+    min-width: 0;
+  }
+
+  .modalTitle {
+    width: 100%;
+
+    margin: 0;
+
+    font-size: 22px;
+    line-height: 1.05;
+
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .modalDescription {
+    margin: 7px 0 0;
+
+    font-size: 14px;
+    line-height: 1.25;
+  }
+
+  .adminCloseBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+
+    margin: 0;
+    padding: 0;
+
+    border-radius: 12px;
+
+    font-size: 18px;
+
+    justify-self: end;
+    flex-shrink: 0;
+  }
+
+  .modalDivider {
+    width: 100%;
+
+    margin: 16px 0;
+  }
+
+  .adminListBody {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .adminListTotal {
+    margin: 0 0 16px;
+
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .adminTableBox {
+    width: 100%;
+    max-width: 100%;
+
+    border-radius: 16px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .adminDataTable {
+    width: 100%;
+    min-width: 330px;
+
+    border-collapse: collapse;
+    table-layout: auto;
+  }
+
+  .adminHeadCell,
+  .adminCell {
+    padding: 12px 10px;
+
+    font-size: 13px;
+    line-height: 1.2;
+
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .adminActionBtns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 6px;
+
+    white-space: nowrap;
+  }
+
+  .iconBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+
+    padding: 0;
+  }
+
+  .newAdminBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    width: 100%;
+    min-height: 44px;
+
+    margin-top: 18px;
+    padding: 8px 14px;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+    line-height: 1.1;
+
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlayStyle {
+    padding: 14px;
+  }
+
+  .adminListModal {
+    width: calc(100vw - 28px);
+    max-width: 350px;
+    max-height: calc(100dvh - 28px);
+
+    padding: 20px 16px 18px;
+
+    border-radius: 22px;
+  }
+
+  .modalHeader {
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 10px;
+  }
+
+  .modalTitle {
+    font-size: 19px;
+  }
+
+  .modalDescription {
+    font-size: 13px;
+  }
+
+  .adminCloseBtn {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+
+    font-size: 17px;
+  }
+
+  .adminDataTable {
+    min-width: 310px;
+  }
+
+  .adminHeadCell,
+  .adminCell {
+    padding: 11px 9px;
+
+    font-size: 12px;
+  }
+
+  .newAdminBtn {
+    min-height: 42px;
+
+    margin-top: 16px;
+
+    font-size: 13px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* FORMULARIO DE ADMINISTRADORES EN MÓVIL */
+
+@media (max-width: 768px) {
+  .overlayStyle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 100dvh;
+
+    padding: 18px;
+    overflow: auto;
+  }
+
+  .adminModalStyle {
+    position: relative;
+
+    width: min(92vw, 400px);
+    max-width: 400px;
+    max-height: calc(100dvh - 36px);
+
+    padding: 22px 20px 20px;
+
+    border-radius: 24px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .adminModalStyle .modalHeader {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-items: start;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding-right: 42px;
+  }
+
+  .adminModalStyle .modalHeader > div:last-child {
+    min-width: 0;
+  }
+
+  .adminModalStyle .modalHeaderIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+
+    border-radius: 12px;
+  }
+
+  .adminModalStyle .modalTitle {
+    width: 100%;
+    margin: 0;
+
+    font-size: 21px;
+    line-height: 1.08;
+
+    white-space: normal;
+    word-break: normal;
+    overflow-wrap: normal;
+  }
+
+  .adminModalStyle .modalDescription {
+    margin: 6px 0 0;
+
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .adminModalStyle .adminCloseBtn {
+    position: absolute;
+
+    top: 18px;
+    right: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+
+    padding: 0;
+
+    border-radius: 11px;
+
+    font-size: 17px;
+  }
+
+  .adminModalStyle .modalDivider {
+    width: 100%;
+
+    margin: 16px 0;
+  }
+
+  .adminModalStyle .formSection {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .adminModalStyle .inputWrapper {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .adminModalStyle .formInput {
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+
+    padding: 0 48px 0 46px;
+
+    font-size: 14px;
+    line-height: 1;
+
+    text-overflow: ellipsis;
+  }
+
+  .adminModalStyle .formInput::placeholder {
+    font-size: 13px;
+  }
+
+  .adminModalStyle .inputIcon {
+    position: absolute;
+
+    top: 50%;
+    left: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .adminModalStyle .passwordEyeBtn {
+    position: absolute;
+
+    top: 50%;
+    right: 7px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+
+    margin: 0;
+    padding: 0;
+
+    transform: translateY(-50%);
+
+    z-index: 3;
+  }
+
+  .adminModalStyle .adminPasswordRules {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    width: 100%;
+
+    padding: 14px 16px;
+
+    border-radius: 16px;
+
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .adminModalStyle .adminPasswordRules > div {
+    width: 100%;
+  }
+
+  .adminModalStyle .modalFooter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 18px;
+  }
+
+  .adminModalStyle .cancelBtn,
+  .adminModalStyle .saveBtn {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlayStyle {
+    padding: 12px;
+  }
+
+  .adminModalStyle {
+    width: calc(100vw - 24px);
+    max-width: 360px;
+    max-height: calc(100dvh - 24px);
+
+    padding: 18px 15px 16px;
+
+    border-radius: 22px;
+  }
+
+  .adminModalStyle .modalHeader {
+    grid-template-columns: 38px minmax(0, 1fr);
+
+    gap: 9px;
+
+    padding-right: 38px;
+  }
+
+  .adminModalStyle .modalHeaderIcon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .adminModalStyle .modalTitle {
+    font-size: 18px;
+  }
+
+  .adminModalStyle .modalDescription {
+    font-size: 12px;
+  }
+
+  .adminModalStyle .adminCloseBtn {
+    top: 14px;
+    right: 14px;
+
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .adminModalStyle .formSection {
+    gap: 10px;
+  }
+
+  .adminModalStyle .formInput {
+    height: 44px;
+
+    padding-left: 42px;
+    padding-right: 44px;
+
+    font-size: 13px;
+  }
+
+  .adminModalStyle .formInput::placeholder {
+    font-size: 12px;
+  }
+
+  .adminModalStyle .inputIcon {
+    left: 14px;
+  }
+
+  .adminModalStyle .passwordEyeBtn {
+    right: 6px;
+
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+  }
+
+  .adminModalStyle .adminPasswordRules {
+    gap: 6px;
+
+    padding: 12px 14px;
+
+    font-size: 12px;
+  }
+
+  .adminModalStyle .modalFooter {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+    margin-top: 8px;
+    padding-bottom: 10px;
+    transform: translateY(-12px);
+  }
+
+  .adminModalStyle .cancelBtn,
+  .adminModalStyle .saveBtn {
+    min-height: 40px;
+
+    padding: 7px 10px;
+
+    font-size: 12px;
+  }
+}
+
+
+
+
+/* MODAL DE EQUIPOS EN MÓVIL */
+
+@media (max-width: 768px) {
+  .overlayStyle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    min-height: 100dvh;
+
+    padding: 16px;
+    overflow: auto;
+  }
+
+  .modalStyle {
+    position: relative;
+
+    width: min(94vw, 430px);
+    max-width: 430px;
+    max-height: calc(100dvh - 32px);
+
+    padding: 20px 18px 18px;
+
+    border-radius: 24px;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+  }
+
+  .modalStyle .modalHeader {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-items: start;
+
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+
+    padding-right: 42px;
+  }
+
+  .modalStyle .modalHeader > div:last-child {
+    min-width: 0;
+  }
+
+  .modalStyle .modalHeaderIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+
+    border-radius: 12px;
+  }
+
+  .modalStyle .modalTitle {
+    margin: 0;
+
+    font-size: 21px;
+    line-height: 1.08;
+
+    white-space: normal;
+  }
+
+  .modalStyle .modalDescription {
+    margin: 6px 0 0;
+
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  .modalStyle .closeModalBtn {
+    position: absolute;
+
+    top: 17px;
+    right: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+
+    padding: 0;
+
+    border-radius: 11px;
+
+    font-size: 17px;
+
+    z-index: 5;
+  }
+
+  .modalStyle .modalDivider {
+    width: 100%;
+
+    margin: 15px 0;
+  }
+
+  .modalStyle .formSection {
+    width: 100%;
+    min-width: 0;
+
+    margin-bottom: 14px;
+  }
+
+  .modalStyle .sectionHeader {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+
+    margin-bottom: 8px;
+  }
+
+  .modalStyle .sectionIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+  }
+
+  .modalStyle .sectionTitle {
+    margin: 0;
+
+    font-size: 17px;
+    line-height: 1.1;
+  }
+
+  .modalStyle .formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    gap: 10px;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .modalStyle .inputWrapper {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+  }
+
+  .modalStyle .formInput {
+    width: 100%;
+    min-width: 0;
+    height: 44px;
+
+    padding: 0 42px 0 46px;
+
+    font-size: 13px;
+    line-height: 1;
+  }
+
+  .modalStyle .formInput::placeholder {
+    font-size: 13px;
+  }
+
+  .modalStyle .inputIcon {
+    position: absolute;
+
+    top: 50%;
+    left: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 18px;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .modalStyle .switchGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    width: 100%;
+
+    margin: 2px 0 14px;
+    padding: 10px 2px;
+  }
+
+  .modalStyle .switchGroup .sectionTitle {
+    display: flex;
+    align-items: center;
+
+    gap: 9px;
+  }
+
+  .modalStyle .modalFooter {
+    position: sticky;
+    bottom: -18px;
+
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-top: 10px;
+    padding: 12px 0 4px;
+
+    background: inherit;
+
+    z-index: 6;
+  }
+
+  .modalStyle .cancelBtn,
+  .modalStyle .saveBtn {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+
+    padding: 8px 12px;
+
+    font-size: 13px;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 480px) {
+  .overlayStyle {
+    padding: 10px;
+  }
+
+  .modalStyle {
+    width: calc(100vw - 20px);
+    max-width: 378px;
+    max-height: calc(100dvh - 20px);
+
+    padding: 16px 14px 14px;
+
+    border-radius: 21px;
+  }
+
+  .modalStyle .modalHeader {
+    grid-template-columns: 38px minmax(0, 1fr);
+
+    gap: 9px;
+
+    padding-right: 38px;
+  }
+
+  .modalStyle .modalHeaderIcon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .modalStyle .modalTitle {
+    font-size: 18px;
+  }
+
+  .modalStyle .modalDescription {
+    font-size: 12px;
+  }
+
+  .modalStyle .closeModalBtn {
+    top: 13px;
+    right: 13px;
+
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .modalStyle .modalDivider {
+    margin: 12px 0;
+  }
+
+  .modalStyle .formSection {
+    margin-bottom: 11px;
+  }
+
+  .modalStyle .sectionHeader {
+    margin-bottom: 7px;
+  }
+
+  .modalStyle .sectionTitle {
+    font-size: 16px;
+  }
+
+  .modalStyle .formGrid {
+    gap: 8px;
+  }
+
+  .modalStyle .formInput {
+    height: 43px;
+
+    padding-left: 42px;
+    padding-right: 38px;
+
+    font-size: 12px;
+  }
+
+  .modalStyle .formInput::placeholder {
+    font-size: 12px;
+  }
+
+  .modalStyle .inputIcon {
+    left: 14px;
+  }
+
+  .modalStyle .switchGroup {
+    margin-bottom: 10px;
+    padding: 8px 2px;
+  }
+
+  .modalStyle .modalFooter {
+    bottom: -14px;
+
+    gap: 8px;
+
+    margin-top: 6px;
+    padding: 10px 0 6px;
+
+    transform: translateY(-8px);
+  }
+
+  .modalStyle .cancelBtn,
+  .modalStyle .saveBtn {
+    min-height: 40px;
+
+    padding: 7px 10px;
+
+    font-size: 12px;
+  }
+}

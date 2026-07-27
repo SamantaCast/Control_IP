@@ -20,7 +20,6 @@ const User = require("./models/user");
 const impresorasRoutes = require("./routes/impresoras.routes");
 const usersRoutes = require("./routes/users.routes");
 const { verificarToken, soloAdmin } = require("./middleware/auth");
-const { useReducer } = require("react");
 
 // Establece la conexión con la base de datos.
 
@@ -32,18 +31,14 @@ app.get("/", (req, res) => {
   res.send("Servidor funcionando correctamente");
 });
 
-// Autentifica a los usuarios y genera un token JWT.
+// Autentica a los usuarios y genera un token JWT.
 
 app.post("/login", async (req, res) => {
   try {
     const { usuario, password } = req.body;
 
-    console.log("Usuario recibido", usuario);
-
     // Busca el usuario registrado.
     const user = await User.findOne({ usuario });
-
-    console.log("Usuario encontrado", user);
 
     if (!user) {
       return res.status(401).json({
@@ -56,8 +51,6 @@ app.post("/login", async (req, res) => {
       ? await bcrypt.compare(password, user.password)
       : password === user.password;
 
-    console.log("Coincide la contraseña:", coincide);
-    
     if (!coincide) {
       return res.status(401).json({
         mensaje: "Datos incorrectos",
@@ -94,7 +87,10 @@ app.post("/login", async (req, res) => {
       nombre: user.nombre,
       usuario: user.usuario,
     });
+
   } catch (error) {
+    console.error(error);
+
     return res.status(500).json({
       mensaje: "Error en el servidor",
     });
@@ -123,7 +119,7 @@ app.use("/api/users", verificarToken, soloAdmin, usersRoutes);
 
 // Inicia el servidor en el puerto configurado.
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);

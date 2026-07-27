@@ -5,6 +5,7 @@
 // Importaciones.
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 import {
   faList,
   faPlus,
@@ -12,9 +13,13 @@ import {
   faDesktop,
   faUsers,
   faNetworkWired,
+  faLock,
   faFileExcel,
   faFilePdf,
+  faBars,
+  faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import type { Impresora } from "./types";
 
 // Propiedades del componente.
 
@@ -24,6 +29,7 @@ interface SearchBarProps {
 
   logueado: boolean;
   token: string;
+  impresoras: Impresora[];
 
   // Estado del buscador.
 
@@ -67,6 +73,13 @@ interface SearchBarProps {
     React.SetStateAction<string>
   >;
 
+  // Filtro por estado.
+
+  filtroReservado: string;
+  setFiltroReservado: React.Dispatch<
+    React.SetStateAction<string>
+  >;
+
   // Estadísticas del sistema.
 
   stats: {
@@ -74,6 +87,7 @@ interface SearchBarProps {
     equiposActivos: number;
     totalUsuarios: number;
     totalIPs: number;
+    ipsReservadas: number;
   };
 
   // Funciones.
@@ -87,6 +101,7 @@ interface SearchBarProps {
 
 export default function SearchBar({
   logueado,
+  impresoras,
   token,
   busqueda,
   setBusqueda,
@@ -106,7 +121,71 @@ export default function SearchBar({
   setFiltroUbicacion,
   filtroEquipo,
   setFiltroEquipo,
+  filtroReservado,
+  setFiltroReservado,
 }: SearchBarProps) {
+
+  const [
+    mostrarFiltrosMovil,
+    setMostrarFiltrosMovil,
+  ] = useState(false);
+
+  const limpiar = (v?: string) =>
+    v?.trim() || "";
+
+  const unicos = (arr: string[]) =>
+    [...new Set(arr.filter(Boolean))].sort((a, b) =>
+      a.localeCompare(b)
+    );
+
+  const departamentosFiltrados = unicos(
+    impresoras
+      .filter(
+        (i) =>
+          (!filtroEdificio || limpiar(i.edificio) === limpiar(filtroEdificio)) &&
+          (!filtroUbicacion || limpiar(i.ubicacion) === limpiar(filtroUbicacion)) &&
+          (!filtroEquipo || limpiar(i.equipo) === limpiar(filtroEquipo)) &&
+          (!filtroReservado || String(i.reservado) === filtroReservado)
+      )
+      .map((i) => limpiar(i.departamento))
+  );
+
+  const edificiosFiltrados = unicos(
+    impresoras
+      .filter(
+        (i) =>
+          (!filtroDepartamento || limpiar(i.departamento) === limpiar(filtroDepartamento)) &&
+          (!filtroUbicacion || limpiar(i.ubicacion) === limpiar(filtroUbicacion)) &&
+          (!filtroEquipo || limpiar(i.equipo) === limpiar(filtroEquipo)) &&
+          (!filtroReservado || String(i.reservado) === filtroReservado)
+      )
+      .map((i) => limpiar(i.edificio))
+  );
+
+  const ubicacionesFiltradas = unicos(
+    impresoras
+      .filter(
+        (i) =>
+          (!filtroDepartamento || limpiar(i.departamento) === limpiar(filtroDepartamento)) &&
+          (!filtroEdificio || limpiar(i.edificio) === limpiar(filtroEdificio)) &&
+          (!filtroEquipo || limpiar(i.equipo) === limpiar(filtroEquipo)) &&
+          (!filtroReservado || String(i.reservado) === filtroReservado)
+      )
+      .map((i) => limpiar(i.ubicacion))
+  );
+
+  const equiposFiltrados = unicos(
+    impresoras
+      .filter(
+        (i) =>
+          (!filtroDepartamento || limpiar(i.departamento) === limpiar(filtroDepartamento)) &&
+          (!filtroEdificio || limpiar(i.edificio) === limpiar(filtroEdificio)) &&
+          (!filtroUbicacion || limpiar(i.ubicacion) === limpiar(filtroUbicacion)) &&
+          (!filtroReservado || String(i.reservado) === filtroReservado)
+      )
+      .map((i) => limpiar(i.equipo))
+  );
+
 
   return (
     <>
@@ -121,19 +200,19 @@ export default function SearchBar({
 
           <div className="titleArea">
 
-            <div className="panelTitle">
-              Control Equipos de Cómputo
-            </div>
+            
 
-            <p className="panelSubtitle">
-              Sistema de Gestión de Activos Informáticos
-            </p>
+            
 
           </div>
 
           {/* Tarjetas de estadísticas. */}
 
-          <div className="statsArea">
+          <div
+            className={`statsArea ${
+              logueado ? "statsAreaLogged" : ""
+            }`}
+          >
 
             {/* Tarjeta de equipos registrados. */}
 
@@ -146,7 +225,7 @@ export default function SearchBar({
               <div>
 
                 <span className="statLabel">
-                  Total de equipos
+                  Equipos
                 </span>
 
                 <h3 className="statNumber">
@@ -200,7 +279,7 @@ export default function SearchBar({
               <div>
 
                 <span className="statLabel">
-                  IPs registradas
+                  IPs 
                 </span>
 
                 <h3 className="statNumber">
@@ -215,6 +294,34 @@ export default function SearchBar({
 
             </div>
 
+            {/* Tarjeta de IPs reservadas. */}
+
+            {logueado && (
+              <div className="statCard">
+
+                <div className="statIcon ip">
+                  <FontAwesomeIcon icon={faLock} />
+                </div>
+
+                <div>
+
+                  <span className="statLabel">
+                    IPs reservadas
+                  </span>
+
+                  <h3 className="statNumber">
+                    {stats.ipsReservadas.toLocaleString()}
+                  </h3>
+
+                  <small className="statSmall">
+                    Asignadas
+                  </small>
+
+                </div>
+
+              </div>
+            )}
+
           </div>
 
         </div>
@@ -227,167 +334,207 @@ export default function SearchBar({
 
           <div className="filtersRow">
 
-            {/* Buscador. */}
+  {/* Buscador. */}
 
-            <div className="searchBox">
+  <div className="searchBox">
+    <FontAwesomeIcon
+      icon={faSearch}
+      className="searchIcon"
+    />
 
-              <FontAwesomeIcon
-                icon={faSearch}
-                className="searchIcon"
-              />
+    <input
+      type="text"
+      className="searchInput"
+      placeholder="Buscar..."
+      value={busqueda}
+      onChange={(e) =>
+        setBusqueda(e.target.value)
+      }
+    />
+  </div>
 
-              <input
-                type="text"
-                className="searchInput"
-                placeholder="Buscar por nombre, usuario, IP..."
-                value={busqueda}
-                onChange={(e) =>
-                  setBusqueda(e.target.value)
-                }
-              />
+  {/* Botón móvil para abrir los filtros. */}
 
-            </div>
+  <button
+    type="button"
+    className="mobileFiltersButton"
+    onClick={() =>
+      setMostrarFiltrosMovil(
+        (valorAnterior) => !valorAnterior
+      )
+    }
+    aria-expanded={mostrarFiltrosMovil}
+    aria-controls="filtersMobilePanel"
+  >
+    <FontAwesomeIcon
+      icon={
+        mostrarFiltrosMovil
+          ? faXmark
+          : faBars
+      }
+    />
 
-            {/* Contenedor de filtros. */}
+    <span>
+      {mostrarFiltrosMovil
+        ? "Cerrar filtros"
+        : "Filtros"}
+    </span>
+  </button>
 
-            <div className="filtersRight">
+  {/* Contenedor de filtros. */}
 
-              {/* Filtro por departamento. */}
+<div
+  id="filtersMobilePanel"
+  className={`filtersRight ${
+    mostrarFiltrosMovil
+      ? "filtersMobileOpen"
+      : ""
+  }`}
+>
+  {/* Filtro por departamento. */}
 
-              <div className="filterItem">
+  <div className="filterItem filterItemDepartamento">
+    <select
+      className="filterSelect"
+      value={filtroDepartamento}
+      onChange={(e) =>
+        setFiltroDepartamento(e.target.value)
+      }
+    >
+      <option value="">
+        DEPARTAMENTO
+      </option>
 
-                <select
-                  className="filterSelect"
-                  value={filtroDepartamento}
-                  onChange={(e) =>
-                    setFiltroDepartamento(
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="">
-                    DEPARTAMENTO
-                  </option>
+      {departamentosFiltrados.map((item) => (
+        <option
+          key={item}
+          value={item}
+        >
+          {item}
+        </option>
+      ))}
+    </select>
+  </div>
 
-                  {departamentos.map((item) => (
-                    <option
-                      key={item}
-                      value={item}
-                    >
-                      {item}
-                    </option>
-                  ))}
+  {/* Filtro por edificio. */}
 
-                </select>
+  <div className="filterItem">
+    <select
+      className="filterSelect"
+      value={filtroEdificio}
+      onChange={(e) =>
+        setFiltroEdificio(e.target.value)
+      }
+    >
+      <option value="">
+        EDIFICIO
+      </option>
 
-              </div>
+      {edificiosFiltrados.map((edificio) => (
+        <option
+          key={edificio}
+          value={edificio}
+        >
+          {edificio}
+        </option>
+      ))}
+    </select>
+  </div>
 
-              {/* Filtro por edificio. */}
+  {/* Filtro por ubicación. */}
 
-              <div className="filterItem">
+  <div className="filterItem">
+    <select
+      className="filterSelect"
+      value={filtroUbicacion}
+      onChange={(e) =>
+        setFiltroUbicacion(e.target.value)
+      }
+    >
+      <option value="">
+        UBICACIÓN
+      </option>
 
-                <select
-                  className="filterSelect"
-                  value={filtroEdificio}
-                  onChange={(e) =>
-                    setFiltroEdificio(
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="">
-                    EDIFICIO
-                  </option>
+      {ubicacionesFiltradas.map((item) => (
+        <option
+          key={item}
+          value={item}
+        >
+          {item}
+        </option>
+      ))}
+    </select>
+  </div>
 
-                  {edificios.map((edificio) => (
-                    <option
-                      key={edificio}
-                      value={edificio}
-                    >
-                      {edificio}
-                    </option>
-                  ))}
+  {/* Filtro por equipo. */}
 
-                </select>
+  <div className="filterItem">
+    <select
+      className="filterSelect"
+      value={filtroEquipo}
+      onChange={(e) =>
+        setFiltroEquipo(e.target.value)
+      }
+    >
+      <option value="">
+        EQUIPO
+      </option>
 
-              </div>
+      {equiposFiltrados.map((item) => (
+        <option
+          key={item}
+          value={item}
+        >
+          {item}
+        </option>
+      ))}
+    </select>
+  </div>
 
-              {/* Filtro por ubicación. */}
+  {/* Filtro por estado reservado. */}
 
-              <div className="filterItem">
+  {logueado && (
+    <div className="filterItem">
+      <select
+        className="filterSelect"
+        value={filtroReservado}
+        onChange={(e) =>
+          setFiltroReservado(e.target.value)
+        }
+      >
+        <option value="">
+          ESTADO
+        </option>
 
-                <select
-                  className="filterSelect"
-                  value={filtroUbicacion}
-                  onChange={(e) =>
-                    setFiltroUbicacion(
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="">
-                    UBICACIÓN
-                  </option>
+        <option value="true">
+          RESERVADO
+        </option>
 
-                  {ubicaciones.map((item) => (
-                    <option
-                      key={item}
-                      value={item}
-                    >
-                      {item}
-                    </option>
-                  ))}
+        <option value="false">
+          NO RESERVADO
+        </option>
+      </select>
+    </div>
+  )}
 
-                </select>
+  {/* Botón para limpiar los filtros. */}
 
-              </div>
-
-              {/* Filtro por equipo. */}
-
-              <div className="filterItem">
-
-                <select
-                  className="filterSelect"
-                  value={filtroEquipo}
-                  onChange={(e) =>
-                    setFiltroEquipo(
-                      e.target.value
-                    )
-                  }
-                >
-                  <option value="">
-                    EQUIPO
-                  </option>
-
-                  {equipos.map((item) => (
-                    <option
-                      key={item}
-                      value={item}
-                    >
-                      {item}
-                    </option>
-                  ))}
-
-                </select>
-
-              </div>
-
-              {/* Botón para limpiar los filtros. */}
-
-              <button
-                className="btnClearMini"
-                onClick={() => {
-                  setBusqueda("");
-                  setFiltroDepartamento("");
-                  setFiltroEdificio("");
-                  setFiltroUbicacion("");
-                  setFiltroEquipo("");
-                }}
-              >
-                Limpiar filtros
-              </button>
-
-            </div>
+  <button
+    type="button"
+    className="btnClearMini"
+    onClick={() => {
+      setBusqueda("");
+      setFiltroDepartamento("");
+      setFiltroEdificio("");
+      setFiltroUbicacion("");
+      setFiltroEquipo("");
+      setFiltroReservado("");
+      setMostrarFiltrosMovil(false);
+    }}
+  >
+    Limpiar filtros
+  </button>
+</div>
 
           </div>
                   {/* Botones de acciones. */}

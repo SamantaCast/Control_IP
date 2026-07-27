@@ -4,17 +4,19 @@
 
 // Importaciones.
 
+import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBars,
+  faXmark,
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { Impresora } from "./types";
 
 // Propiedades del componente.
 
 interface Props {
-
   // Registros mostrados en la tabla.
 
   impresoras: Impresora[];
@@ -38,6 +40,7 @@ interface Props {
   // Configuración de registros por página.
 
   registrosPorPagina: number;
+
   setRegistrosPorPagina: React.Dispatch<
     React.SetStateAction<number>
   >;
@@ -55,22 +58,35 @@ export default function Pagination({
   registrosPorPagina,
   setRegistrosPorPagina,
 }: Props) {
+  // Controla la visibilidad de la paginación en celular.
+
+  const [
+    mostrarPaginacionMovil,
+    setMostrarPaginacionMovil,
+  ] = useState(false);
 
   // Genera la lista de páginas que se mostrarán.
 
   const obtenerPaginas = (): (number | string)[] => {
-
     if (totalPaginas <= 7) {
       return Array.from(
         { length: totalPaginas },
-        (_, i) => i + 1
+        (_, indice) => indice + 1
       );
     }
 
     // Primeras páginas.
 
     if (paginaActual <= 4) {
-      return [1, 2, 3, 4, 5, "...", totalPaginas];
+      return [
+        1,
+        2,
+        3,
+        4,
+        5,
+        "...",
+        totalPaginas,
+      ];
     }
 
     // Últimas páginas.
@@ -100,100 +116,216 @@ export default function Pagination({
     ];
   };
 
+  // Cambia la página y cierra el panel móvil.
+
+  const cambiarPagina = (
+    nuevaPagina: number
+  ) => {
+    if (
+      nuevaPagina < 1 ||
+      nuevaPagina > totalPaginas
+    ) {
+      return;
+    }
+
+    setPaginaActual(nuevaPagina);
+  };
+
   return (
+    <div className="tablePagination">
 
-    <>
-      {/* Controles de paginación. */}
+      {/* Información de los registros mostrados. */}
 
-      <div className="tablePagination">
+      <div className="paginationInfo">
+        <span>Mostrando</span>
 
-        {/* Información de los registros mostrados. */}
+        <strong>
+          {impresoras.length === 0
+            ? 0
+            : indiceInicio + 1}
+          {" - "}
+          {Math.min(
+            indiceFin,
+            impresoras.length
+          )}
+        </strong>
 
-        <div className="paginationInfo">
-          Mostrando
-          <strong>
-            {impresoras.length === 0 ? 0 : indiceInicio + 1}
-            {" - "}
-            {Math.min(indiceFin, impresoras.length)}
-          </strong>
-          de <strong>{impresoras.length}</strong> registros
-        </div>
+        <span>de</span>
 
+        <strong>
+          {impresoras.length}
+        </strong>
+
+        <span>registros</span>
+      </div>
+
+      {/* Botón móvil para mostrar los controles. */}
+
+      <button
+        type="button"
+        className="mobilePaginationButton"
+        onClick={() =>
+          setMostrarPaginacionMovil(
+            (valorAnterior) =>
+              !valorAnterior
+          )
+        }
+        aria-expanded={
+          mostrarPaginacionMovil
+        }
+        aria-controls="paginationMobilePanel"
+        aria-label={
+          mostrarPaginacionMovil
+            ? "Cerrar opciones de paginación"
+            : "Mostrar opciones de paginación"
+        }
+        title={
+          mostrarPaginacionMovil
+            ? "Cerrar paginación"
+            : "Mostrar paginación"
+        }
+      >
+        <FontAwesomeIcon
+          icon={
+            mostrarPaginacionMovil
+              ? faXmark
+              : faBars
+          }
+        />
+
+        <span>
+          {mostrarPaginacionMovil
+            ? "Cerrar"
+            : `Página ${paginaActual}`}
+        </span>
+      </button>
+
+      {/* Panel con la navegación y el selector. */}
+
+      <div
+        id="paginationMobilePanel"
+        className={`paginationMobilePanel ${
+          mostrarPaginacionMovil
+            ? "paginationMobileOpen"
+            : ""
+        }`}
+      >
         {/* Navegación entre páginas. */}
 
         <div className="paginationControls">
-
           {/* Página anterior. */}
 
           <button
+            type="button"
             className="pageBtn pageArrow"
             disabled={paginaActual === 1}
-            onClick={() => setPaginaActual((p) => p - 1)}
+            onClick={() =>
+              cambiarPagina(
+                paginaActual - 1
+              )
+            }
+            aria-label="Página anterior"
+            title="Página anterior"
           >
-            <FontAwesomeIcon icon={faChevronLeft} />
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+            />
           </button>
 
           {/* Botones de páginas. */}
 
-          {obtenerPaginas().map((item, index) =>
-            typeof item === "string" ? (
-              <span
-                key={`dots-${index}`}
-                className="pageDots"
-              >
-                ...
-              </span>
-            ) : (
-              <button
-                key={`page-${item}-${index}`}
-                className={`pageBtn ${
-                  paginaActual === item
-                    ? "activePageBtn"
-                    : ""
-                }`}
-                onClick={() => setPaginaActual(item)}
-              >
-                {item}
-              </button>
-            )
+          {obtenerPaginas().map(
+            (item, index) =>
+              typeof item === "string" ? (
+                <span
+                  key={`dots-${index}`}
+                  className="pageDots"
+                  aria-hidden="true"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  key={`page-${item}-${index}`}
+                  className={`pageBtn ${
+                    paginaActual === item
+                      ? "activePageBtn"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    cambiarPagina(item)
+                  }
+                  aria-current={
+                    paginaActual === item
+                      ? "page"
+                      : undefined
+                  }
+                >
+                  {item}
+                </button>
+              )
           )}
 
           {/* Página siguiente. */}
 
           <button
+            type="button"
             className="pageBtn pageArrow"
-            disabled={paginaActual === totalPaginas}
-            onClick={() => setPaginaActual((p) => p + 1)}
+            disabled={
+              paginaActual === totalPaginas ||
+              totalPaginas === 0
+            }
+            onClick={() =>
+              cambiarPagina(
+                paginaActual + 1
+              )
+            }
+            aria-label="Página siguiente"
+            title="Página siguiente"
           >
-            <FontAwesomeIcon icon={faChevronRight} />
+            <FontAwesomeIcon
+              icon={faChevronRight}
+            />
           </button>
-
         </div>
 
         {/* Selector de registros por página. */}
 
         <div className="rowsPerPage">
-
-          <span>Mostrar</span>
+          <label htmlFor="registrosPorPagina">
+            Mostrar
+          </label>
 
           <select
+            id="registrosPorPagina"
             value={registrosPorPagina}
-            onChange={(e) => {
-              setPaginaActual(1);
-              setRegistrosPorPagina(
-                Number(e.target.value)
-              );
-            }}
+            onChange={(evento) => {
+            setPaginaActual(1);
+
+            setRegistrosPorPagina(
+              Number(evento.target.value)
+            );
+          }}
           >
-            <option value={15}>15</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
+            <option value={15}>
+              15 registros
+            </option>
+
+            <option value={25}>
+              25 registros
+            </option>
+
+            <option value={50}>
+              50 registros
+            </option>
+
+            <option value={100}>
+              100 registros
+            </option>
           </select>
-
         </div>
-
       </div>
-    </>
+    </div>
   );
 }

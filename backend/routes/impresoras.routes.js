@@ -4,9 +4,42 @@ const express = require("express");
 const router = express.Router();
 const Impresora = require("../models/impresora");
 const { verificarToken, soloAdmin } = require("../middleware/auth");
+const jwt = require("jsonwebtoken");
 
 // Obtiene el listado de impresoras y permite realizar búsquedas
 // y aplicar filtros por departamento, edificio, ubicación y equipo.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Obtiene el listado de impresoras y permite realizar búsquedas
+// y aplicar filtros por departamento, edificio, ubicación, equipo y estado.
 
 router.get("/", async (req, res) => {
   try {
@@ -16,60 +49,132 @@ router.get("/", async (req, res) => {
       edificio,
       ubicacion,
       equipo,
+      reservado,
     } = req.query;
 
-    let filtro = {};
+    const condiciones = [];
 
-    // Construye el filtro de búsqueda por texto.
+    // Verifica si el usuario está autenticado.
+
+    const auth = req.headers.authorization;
+    let logueado = false;
+
+    if (auth && auth.startsWith("Bearer ")) {
+      try {
+        jwt.verify(
+          auth.split(" ")[1],
+          process.env.JWT_SECRET
+        );
+
+        logueado = true;
+      } catch {
+        logueado = false;
+      }
+    }
+
+    // Sin iniciar sesión, solamente muestra registros disponibles.
+
+    if (!logueado) {
+      condiciones.push({
+        $or: [
+          { reservado: false },
+          { reservado: { $exists: false } },
+        ],
+      });
+    }
+
+    // Búsqueda general por texto.
+
     if (busqueda && busqueda.trim() !== "") {
       const texto = busqueda.trim();
 
-      filtro.$or = [
-        { departamento: { $regex: texto, $options: "i" } },
-        { edificio: { $regex: texto, $options: "i" } },
-        { ubicacion: { $regex: texto, $options: "i" } },
-        { nombre: { $regex: texto, $options: "i" } },
-        { email: { $regex: texto, $options: "i" } },
-        { equipo: { $regex: texto, $options: "i" } },
-        { usuario: { $regex: texto, $options: "i" } },
-        { ip: { $regex: texto, $options: "i" } },
-        { codigo: { $regex: texto, $options: "i" } },
-      ];
+      condiciones.push({
+        $or: [
+          { departamento: { $regex: texto, $options: "i" } },
+          { edificio: { $regex: texto, $options: "i" } },
+          { ubicacion: { $regex: texto, $options: "i" } },
+          { nombre: { $regex: texto, $options: "i" } },
+          { email: { $regex: texto, $options: "i" } },
+          { equipo: { $regex: texto, $options: "i" } },
+          { usuario: { $regex: texto, $options: "i" } },
+          { ip: { $regex: texto, $options: "i" } },
+          { codigo: { $regex: texto, $options: "i" } },
+        ],
+      });
     }
 
-    // Aplica los filtros seleccionados.
-
-    if (edificio && edificio.trim() !== "") {
-      filtro.edificio = edificio.trim();
-    }
+    // Filtros seleccionados.
 
     if (departamento && departamento.trim() !== "") {
-      filtro.departamento = departamento.trim();
+      condiciones.push({
+        departamento: departamento.trim(),
+      });
+    }
+
+    if (edificio && edificio.trim() !== "") {
+      condiciones.push({
+        edificio: edificio.trim(),
+      });
     }
 
     if (ubicacion && ubicacion.trim() !== "") {
-      filtro.ubicacion = ubicacion.trim();
+      condiciones.push({
+        ubicacion: ubicacion.trim(),
+      });
     }
 
     if (equipo && equipo.trim() !== "") {
-      filtro.equipo = equipo.trim();
+      condiciones.push({
+        equipo: equipo.trim(),
+      });
     }
 
-    // Muestra información de depuración en consola.
+    // El filtro de reservados solo se permite con sesión iniciada.
+
+    if (logueado && reservado === "true") {
+      condiciones.push({
+        reservado: true,
+      });
+    }
+
+    if (logueado && reservado === "false") {
+      condiciones.push({
+        $or: [
+          { reservado: false },
+          { reservado: { $exists: false } },
+        ],
+      });
+    }
+
+    // Construye el filtro final.
+
+    const filtro =
+      condiciones.length > 0
+        ? { $and: condiciones }
+        : {};
 
     console.log("QUERY:", req.query);
-    console.log("FILTRO:", JSON.stringify(filtro, null, 2));
-
-    // Obtiene los registros ordenados por departamento.
+    console.log(
+      "FILTRO:",
+      JSON.stringify(filtro, null, 2)
+    );
 
     const datos = await Impresora.find(filtro).sort({
       departamento: 1,
     });
 
-    console.log("REGISTROS ENCONTRADOS:", datos.length);
+    console.log(
+      "REGISTROS ENCONTRADOS:",
+      datos.length
+    );
 
     res.json(datos);
   } catch (error) {
+    console.error(
+      "ERROR AL OBTENER IMPRESORAS:",
+      error
+    );
+
     res.status(500).json({
       mensaje: "Error al obtener impresoras",
     });
@@ -184,28 +289,85 @@ router.delete("/:id", verificarToken, soloAdmin, async (req, res) => {
 
 router.get("/stats", async (req, res) => {
   try {
-    const totalEquipos = await Impresora.countDocuments();
 
-    const totalIPs = await Impresora.countDocuments({
+    const auth = req.headers.authorization;
+
+    let logueado = false;
+
+    if (auth && auth.startsWith("Bearer ")) {
+      try {
+        jwt.verify(
+          auth.split(" ")[1],
+          process.env.JWT_SECRET
+        );
+
+        logueado = true;
+      } catch {
+        logueado = false;
+      }
+    }
+
+    const filtroEquipos = {};
+
+    const filtroIPs = {
       ip: {
         $exists: true,
         $ne: "",
       },
-    });
+    };
 
-    const totalUsuarios = await Impresora.countDocuments({
+    const filtroUsuarios = {
       usuario: {
         $exists: true,
         $ne: "",
       },
-    });
+    };
+
+    if (!logueado) {
+      filtroEquipos.$or = [
+        { reservado: false },
+        { reservado: { $exists: false } },
+      ];
+
+      filtroIPs.$or = [
+        { reservado: false },
+        { reservado: { $exists: false } },
+      ];
+
+      filtroUsuarios.$or = [
+        { reservado: false },
+        { reservado: { $exists: false } },
+      ];
+    }
+
+    const totalEquipos = await Impresora.countDocuments(filtroEquipos);
+
+    const totalIPs = await Impresora.countDocuments(filtroIPs);
+
+    const totalUsuarios = await Impresora.countDocuments(filtroUsuarios);
+
+    // Contador de IPs reservadas.
+
+    const filtroIPsReservadas = {
+      reservado: true,
+      ip: {
+        $exists: true,
+        $ne: "",
+      },
+    };
+
+    const ipsReservadas = logueado
+      ? await Impresora.countDocuments(filtroIPsReservadas)
+      : 0;
 
     res.json({
       totalEquipos,
       totalUsuarios,
       totalIPs,
+      ipsReservadas,
       equiposActivos: totalEquipos,
     });
+
   } catch (error) {
     res.status(500).json({
       mensaje: "Error al obtener estadísticas",

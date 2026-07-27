@@ -5,7 +5,11 @@
 // Importaciones.
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useRef } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   faUser,
@@ -13,6 +17,8 @@ import {
   faXmark,
   faUsers,
   faLock,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 
 // Propiedades del componente.
@@ -71,6 +77,11 @@ export default function Header({
 
   const menuRef = useRef<HTMLDivElement>(null);
   const loginRef = useRef<HTMLFormElement>(null);
+  
+  const [
+    mostrarPasswordLogin,
+    setMostrarPasswordLogin,
+  ] = useState(false);
 
   // Cierra el menú de usuario y el formulario de inicio de sesión
   // cuando el usuario hace clic fuera de ellos.
@@ -127,7 +138,11 @@ export default function Header({
 
       {/* Barra superior del sistema. */}
 
-      <div className="topBar">
+      <div
+        className={`topBar ${
+          logueado ? "topBarLogged" : ""
+        }`}
+      >
 
         {/* Logotipos institucionales. */}
 
@@ -168,6 +183,7 @@ export default function Header({
             {/* Botón para mostrar el menú del usuario. */}
 
             <button
+              type="button"
               className="userProfileBtn"
               onClick={() =>
                 setMostrarMenuUsuario(
@@ -294,20 +310,54 @@ export default function Header({
                   {/* Campo para la contraseña. */}
 
                   <div className="inputGroup">
-                    <FontAwesomeIcon
-                      icon={faLock}
-                      className="inputIcon"
-                    />
+                  <FontAwesomeIcon
+                    icon={faLock}
+                    className="inputIcon"
+                  />
 
-                    <input
-                      type="password"
-                      placeholder="Contraseña"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      autoComplete="current-password"
-                      required
+                  <input
+                    type={
+                      mostrarPasswordLogin
+                        ? "text"
+                        : "password"
+                    }
+                    placeholder="Contraseña"
+                    value={password}
+                    onChange={(e) =>
+                      setPassword(e.target.value)
+                    }
+                    autoComplete="current-password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    className="loginPasswordEyeBtn"
+                    onClick={() =>
+                      setMostrarPasswordLogin(
+                        (valorAnterior) => !valorAnterior
+                      )
+                    }
+                    aria-label={
+                      mostrarPasswordLogin
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
+                    title={
+                      mostrarPasswordLogin
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
+                  >
+                    <FontAwesomeIcon
+                      icon={
+                        mostrarPasswordLogin
+                          ? faEyeSlash
+                          : faEye
+                      }
                     />
-                  </div>
+                  </button>
+                </div>
 
                   {/* Botón para iniciar sesión. */}
 

@@ -32,11 +32,18 @@ const impresoraSchema = new mongoose.Schema(
 
     // Código o número de inventario.
     codigo: String,
+
+    reservado: {
+      type: Boolean,
+      default: false
+    },
   },
+  
   {
     // Agrega automáticamente las fechas de creación y actualización.
     timestamps: true,
   }
+
 );
 
 // Exporta el modelo utilizando la colección "datos".

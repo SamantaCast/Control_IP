@@ -6,21 +6,25 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import type { Impresora } from "../dashboard/types";
 
+// Opciones de exportación.
+
+interface OpcionesExportacion {
+  esAdmin: boolean;
+  incluirReservados: boolean;
+}
+
 // Convierte una imagen a formato Base64.
 
 async function cargarImagen(
   url: string
 ): Promise<string> {
-
   return new Promise((resolve, reject) => {
-
     const img = new Image();
 
     img.crossOrigin = "anonymous";
     img.src = url;
 
     img.onload = () => {
-
       const canvas =
         document.createElement("canvas");
 
@@ -41,26 +45,43 @@ async function cargarImagen(
       resolve(
         canvas.toDataURL("image/png")
       );
-
     };
 
     img.onerror = () => {
-
       reject(
         `No fue posible cargar ${url}`
       );
-
     };
-
   });
-
 }
 
 // Genera el reporte en formato PDF.
 
 export async function exportarPDF(
-  impresoras: Impresora[]
+  impresoras: Impresora[],
+  opciones: OpcionesExportacion
 ) {
+  /*
+   * Solo un administrador puede incluir registros
+   * marcados como reservados.
+   */
+
+  const puedeIncluirReservados =
+    opciones.esAdmin === true &&
+    opciones.incluirReservados === true;
+
+  /*
+   * Si el administrador no lo autoriza, se eliminan
+   * de la exportación los registros reservados.
+   */
+
+  const impresorasExportables =
+    puedeIncluirReservados
+      ? impresoras
+      : impresoras.filter(
+          (impresora) =>
+            !impresora.reservado
+        );
 
   // Crea el documento PDF.
 
@@ -88,7 +109,6 @@ export async function exportarPDF(
   // Genera la tabla del reporte.
 
   autoTable(doc, {
-
     startY: 59,
 
     theme: "grid",
@@ -112,17 +132,19 @@ export async function exportarPDF(
       "Código",
     ]],
 
-    body: impresoras.map((imp) => [
-      imp.departamento,
-      imp.edificio,
-      imp.ubicacion,
-      imp.nombre,
-      imp.email,
-      imp.equipo,
-      imp.usuario,
-      imp.ip,
-      imp.codigo,
-    ]),
+    body: impresorasExportables.map(
+      (impresora) => [
+        impresora.departamento,
+        impresora.edificio,
+        impresora.ubicacion,
+        impresora.nombre,
+        impresora.email,
+        impresora.equipo,
+        impresora.usuario,
+        impresora.ip,
+        impresora.codigo,
+      ]
+    ),
 
     headStyles: {
       fillColor: [138, 32, 54],
@@ -141,11 +163,50 @@ export async function exportarPDF(
       fillColor: [248, 248, 248],
     },
 
-        // Configura el encabezado de la primera página.
+    /*
+     * Colorea toda la fila horizontal cuando
+     * el registro está marcado como reservado.
+     */
+
+    didParseCell: (data) => {
+      // Solo modifica las filas del cuerpo.
+
+      if (data.section !== "body") {
+        return;
+      }
+
+      const impresora =
+        impresorasExportables[data.row.index];
+
+      if (impresora?.reservado) {
+        // Fondo rosa claro.
+
+        data.cell.styles.fillColor = [
+          248,
+          225,
+          231,
+        ];
+
+        // Texto color vino.
+
+        data.cell.styles.textColor = [
+          110,
+          25,
+          45,
+        ];
+
+        // Texto en negrita.
+
+        data.cell.styles.fontStyle =
+          "bold";
+      }
+    },
+
+    // Configura el encabezado de la primera página.
 
     willDrawPage: (data) => {
-
-      // Muestra el encabezado únicamente en la primera página.
+      // Muestra el encabezado únicamente
+      // en la primera página.
 
       if (data.pageNumber !== 1) return;
 
@@ -236,7 +297,7 @@ export async function exportarPDF(
         }
       );
 
-      // Agrega la fecha, hora y total de registros.
+      // Agrega la fecha, hora y total.
 
       doc.setFont(
         "helvetica",
@@ -288,17 +349,20 @@ export async function exportarPDF(
         52
       );
 
+      /*
+       * Muestra únicamente el número de registros
+       * que realmente fueron exportados.
+       */
+
       doc.text(
-        `${impresoras.length}`,
+        `${impresorasExportables.length}`,
         287,
         52,
         {
           align: "right",
         }
       );
-
     },
-
   });
 
   // Agrega el pie de página.
@@ -310,7 +374,6 @@ export async function exportarPDF(
     pagina <= paginas;
     pagina++
   ) {
-
     doc.setPage(pagina);
 
     doc.setDrawColor(220);
@@ -351,9 +414,9 @@ export async function exportarPDF(
         align: "right",
       }
     );
-
   }
-    // Genera el nombre del archivo.
+
+  // Genera el nombre del archivo.
 
   const nombreArchivo =
     `Control_Equipos_${fecha
@@ -362,8 +425,5 @@ export async function exportarPDF(
 
   // Descarga el archivo PDF.
 
-  doc.save(
-    nombreArchivo
-  );
-
+  doc.save(nombreArchivo);
 }

@@ -191,6 +191,14 @@ export default function EquipmentTable({
               />
             </th>
 
+            {/* Columna de Estado. */}
+
+            {logueado && (
+              <th className="tableHeadCell">
+                Estado
+              </th>
+            )}
+
             {/* Columna de acciones. */}
 
             {logueado && (
@@ -211,7 +219,7 @@ export default function EquipmentTable({
           {impresoras.length === 0 ? (
             <tr>
               <td
-                colSpan={logueado ? 10 : 9}
+                colSpan={logueado ? 11 : 9}
                 className="emptyState"
               >
                 No se encontraron registros
@@ -259,6 +267,18 @@ export default function EquipmentTable({
                 <td className="tableCell">
                   {imp.codigo}
                 </td>
+
+                {/* Acciones disponibles. */}
+
+                {logueado && (
+                <td className="tableCell">
+                  {imp.reservado && (
+                    <span className="status reservado">
+                      Reservado
+                    </span>
+                  )}
+                </td>
+              )}
 
                 {/* Acciones disponibles. */}
 
