@@ -1,7 +1,10 @@
 // Layout principal de la aplicación.
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+} from "next/font/google";
 
 // Estilos globales.
 
@@ -30,8 +33,10 @@ const geistMono = Geist_Mono({
 // Metadatos de la aplicación.
 
 export const metadata: Metadata = {
-  title: "Control de Direcciones IP",
-  description: "Sistema de control de direcciones IP",
+  title:
+    "Gestión y Control de Direcciones IP",
+  description:
+    "Sistema de gestión y control de direcciones IP del Departamento de Informática",
 };
 
 // Componente principal del layout.
@@ -41,17 +46,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
   return (
     <html lang="es">
-
       <body
         className={`${geistSans.variable} ${geistMono.variable}`}
       >
         {children}
       </body>
-
     </html>
   );
-
 }

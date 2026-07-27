@@ -68,9 +68,11 @@ export async function exportarExcel(
   const libro = new ExcelJS.Workbook();
 
   libro.creator = "Departamento de Informática";
-  libro.company = "LICONSA";
-  libro.subject = "Control Equipos de Cómputo";
-  libro.title = "Control Equipos de Cómputo";
+  libro.company = "Leche para el Bienestar S.A. de C.V.";
+  libro.subject =
+    "Gestión y Control de Direcciones IP";
+  libro.title =
+    "Gestión y Control de Direcciones IP";
   libro.created = fecha;
 
   // Agrega la hoja principal.
@@ -164,7 +166,7 @@ export async function exportarExcel(
   hoja.getRow(6).height = 22;
 
   hoja.getCell("A5").value =
-    "CONTROL EQUIPOS DE CÓMPUTO";
+    "GESTIÓN Y CONTROL DE DIRECCIONES IP";
 
   hoja.getCell("A5").font = {
     bold: true,
@@ -182,7 +184,7 @@ export async function exportarExcel(
   // Configura el subtítulo.
 
   hoja.getCell("A6").value =
-    "Sistema de Gestión de Activos Informáticos";
+    "Departamento de Informática";
 
   hoja.getCell("A6").font = {
     size: 12,
@@ -335,41 +337,47 @@ export async function exportarExcel(
       });
 
       /*
-      * Los registros reservados tienen prioridad
-      * sobre el color alternado.
-      */
+       * Los registros reservados tienen prioridad
+       * sobre el color alternado.
+       */
 
       if (impresora.reservado) {
-        // Colorea toda la fila horizontal reservada.
+        // Colorea toda la fila reservada.
 
-        fila.eachCell({ includeEmpty: true }, (celda) => {
-          celda.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: {
-              argb: "F8E1E7",
-            },
-          };
+        fila.eachCell(
+          { includeEmpty: true },
+          (celda) => {
+            celda.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: {
+                argb: "F8E1E7",
+              },
+            };
 
-          celda.font = {
-            bold: true,
-            color: {
-              argb: "6E192D",
-            },
-          };
-        });
+            celda.font = {
+              bold: true,
+              color: {
+                argb: "6E192D",
+              },
+            };
+          }
+        );
       } else if (indice % 2 === 0) {
         // Color alternado para los registros normales.
 
-        fila.eachCell({ includeEmpty: true }, (celda) => {
-          celda.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: {
-              argb: "F7F7F7",
-            },
-          };
-        });
+        fila.eachCell(
+          { includeEmpty: true },
+          (celda) => {
+            celda.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: {
+                argb: "F7F7F7",
+              },
+            };
+          }
+        );
       }
     }
   );
@@ -408,10 +416,10 @@ export async function exportarExcel(
   hoja.pageSetup.verticalCentered = false;
 
   hoja.headerFooter.oddFooter =
-    "&LDepartamento de Informática&CControl Equipos de Cómputo&RPágina &P de &N";
+    "&LDepartamento de Informática&CGestión y Control de Direcciones IP&RPágina &P de &N";
 
   hoja.headerFooter.evenFooter =
-    "&LDepartamento de Informática&CControl Equipos de Cómputo&RPágina &P de &N";
+    "&LDepartamento de Informática&CGestión y Control de Direcciones IP&RPágina &P de &N";
 
   // Genera el archivo de Excel.
 
@@ -424,10 +432,12 @@ export async function exportarExcel(
 
   // Genera el nombre del archivo.
 
+  const fechaArchivo = fecha
+    .toLocaleDateString("es-MX")
+    .replace(/\//g, "-");
+
   const nombreArchivo =
-    `Control_Equipos_${fecha
-      .toLocaleDateString("es-MX")
-      .replace(/\//g, "-")}.xlsx`;
+    `Gestion_Control_Direcciones_IP_${fechaArchivo}.xlsx`;
 
   // Descarga el archivo.
 

@@ -35,7 +35,9 @@ async function cargarImagen(
 
       if (!ctx) {
         reject(
-          "No fue posible crear el Canvas."
+          new Error(
+            "No fue posible crear el Canvas."
+          )
         );
         return;
       }
@@ -49,7 +51,9 @@ async function cargarImagen(
 
     img.onerror = () => {
       reject(
-        `No fue posible cargar ${url}`
+        new Error(
+          `No fue posible cargar ${url}`
+        )
       );
     };
   });
@@ -89,6 +93,21 @@ export async function exportarPDF(
     orientation: "landscape",
     unit: "mm",
     format: "a4",
+  });
+
+  // Configura los metadatos del documento.
+
+  doc.setProperties({
+    title:
+      "Gestión y Control de Direcciones IP",
+    subject:
+      "Reporte de gestión y control de direcciones IP",
+    author:
+      "Departamento de Informática",
+    creator:
+      "Sistema de Gestión y Control de Direcciones IP",
+    keywords:
+      "direcciones IP, red, informática, control, gestión",
   });
 
   // Carga los logotipos.
@@ -157,6 +176,7 @@ export async function exportarPDF(
       fontSize: 7,
       cellPadding: 1.6,
       overflow: "linebreak",
+      valign: "middle",
     },
 
     alternateRowStyles: {
@@ -205,10 +225,14 @@ export async function exportarPDF(
     // Configura el encabezado de la primera página.
 
     willDrawPage: (data) => {
-      // Muestra el encabezado únicamente
-      // en la primera página.
+      /*
+       * Muestra el encabezado completo únicamente
+       * en la primera página.
+       */
 
-      if (data.pageNumber !== 1) return;
+      if (data.pageNumber !== 1) {
+        return;
+      }
 
       // Inserta los logotipos.
 
@@ -260,7 +284,7 @@ export async function exportarPDF(
         "bold"
       );
 
-      doc.setFontSize(22);
+      doc.setFontSize(20);
 
       doc.setTextColor(
         138,
@@ -269,8 +293,8 @@ export async function exportarPDF(
       );
 
       doc.text(
-        "Control Equipos de Cómputo",
-        165,
+        "Gestión y Control de Direcciones IP",
+        148.5,
         35,
         {
           align: "center",
@@ -289,8 +313,8 @@ export async function exportarPDF(
       doc.setTextColor(90);
 
       doc.text(
-        "Sistema de Gestión de Activos Informáticos",
-        165,
+        "Departamento de Informática",
+        148.5,
         43,
         {
           align: "center",
@@ -395,11 +419,11 @@ export async function exportarPDF(
       "normal"
     );
 
-    doc.setFontSize(9);
+    doc.setFontSize(8.5);
     doc.setTextColor(90);
 
     doc.text(
-      "Documento generado automáticamente por el Sistema Control Equipos de Cómputo | Departamento de Informática",
+      "Documento generado automáticamente por el Sistema de Gestión y Control de Direcciones IP | Departamento de Informática",
       10,
       201
     );
@@ -416,12 +440,16 @@ export async function exportarPDF(
     );
   }
 
+  // Genera la fecha para el nombre del archivo.
+
+  const fechaArchivo = fecha
+    .toLocaleDateString("es-MX")
+    .replace(/\//g, "-");
+
   // Genera el nombre del archivo.
 
   const nombreArchivo =
-    `Control_Equipos_${fecha
-      .toLocaleDateString("es-MX")
-      .replace(/\//g, "-")}.pdf`;
+    `Gestion_Control_Direcciones_IP_${fechaArchivo}.pdf`;
 
   // Descarga el archivo PDF.
 
