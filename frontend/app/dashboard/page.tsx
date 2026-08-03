@@ -464,17 +464,28 @@ export default function Page() {
   };
 
 
-  // Actualiza la tabla y las estadísticas del dashboard.
+  // Indica si existe una búsqueda o algún filtro activo.
 
-    const actualizarDashboard = async (
-      tok: string,
-      textoBusqueda: string = ""
-    ) => {
-      await Promise.all([
-        cargarImpresoras(tok, textoBusqueda),
-        cargarStats(tok),
-      ]);
-    };
+  const hayFiltrosActivos = () =>
+    Boolean(
+      busqueda.trim() ||
+      filtroDepartamento ||
+      filtroEdificio ||
+      filtroUbicacion ||
+      filtroEquipo ||
+      filtroReservado
+    );
+
+  // Actualiza la tabla respetando la búsqueda, los filtros y la página actual.
+
+  const actualizarDashboard = async (tok: string) => {
+    await Promise.all([
+      hayFiltrosActivos()
+        ? buscar(false, tok)
+        : cargarImpresoras(tok, ""),
+      cargarStats(tok),
+    ]);
+  };
 
 // Obtiene los datos para los filtros de búsqueda.
 
@@ -592,34 +603,50 @@ const cargarImpresoras = async (
 
 // Realiza la búsqueda de registros.
 
-const buscar = async () => {
+async function buscar(
+  reiniciarPagina: boolean = true,
+  tok: string = token
+) {
   try {
-    const config = token ? authHeader(token) : {};
+    const config = tok ? authHeader(tok) : {};
 
-   const params = new URLSearchParams({
-    busqueda: busqueda.trim(),
-    departamento: filtroDepartamento,
-    edificio: filtroEdificio,
-    ubicacion: filtroUbicacion,
-    equipo: filtroEquipo,
-    reservado: filtroReservado,
-  });
+    const params = new URLSearchParams({
+      busqueda: busqueda.trim(),
+      departamento: filtroDepartamento,
+      edificio: filtroEdificio,
+      ubicacion: filtroUbicacion,
+      equipo: filtroEquipo,
+      reservado: filtroReservado,
+    });
 
     const res = await axios.get(
       `${process.env.NEXT_PUBLIC_API_URL}/api/impresoras?${params.toString()}`,
       config
     );
 
-    // Actualiza los resultados de la búsqueda.
+    // Actualiza los resultados conservando la página cuando la recarga
+    // proviene de guardar o eliminar un registro.
 
     setImpresoras(res.data);
-    setPaginaActual(1);
     setCoincidencias(res.data.length);
+
+    if (reiniciarPagina) {
+      setPaginaActual(1);
+    } else {
+      const paginasDisponibles = Math.max(
+        1,
+        Math.ceil(res.data.length / registrosPorPagina)
+      );
+
+      setPaginaActual((pagina) =>
+        Math.min(pagina, paginasDisponibles)
+      );
+    }
 
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 // Abre el formulario para registrar un nuevo equipo.
 
@@ -739,7 +766,7 @@ if (todosVacios) {
 
     // Actualiza la información del sistema.
 
-    await actualizarDashboard(token, busqueda);
+    await actualizarDashboard(token);
 
   } catch (error: any) {
 
@@ -791,7 +818,7 @@ const eliminar = async (id?: string) => {
 
     // Actualiza la información del sistema.
 
-   await actualizarDashboard(token, busqueda);
+   await actualizarDashboard(token);
 
   } catch (error: any) {
 
@@ -1190,7 +1217,7 @@ const cerrarSesion = async () => {
 
   // Carga nuevamente la información pública.
 
-  await actualizarDashboard("", "");
+  await actualizarDashboard("");
 };
 
 // Abre el listado de administradores registrados.
